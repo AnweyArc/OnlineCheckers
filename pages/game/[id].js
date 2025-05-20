@@ -2,6 +2,11 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabaseClient';
+import {
+  applyMove,
+  isValidMove,
+  checkWinCondition
+} from './checkersLogic';
 
 const boardSize = 8;
 
@@ -11,7 +16,7 @@ const GamePage = () => {
   const [game, setGame] = useState(null);
   const [userId, setUserId] = useState(null);
   const [selected, setSelected] = useState(null);
-  const [playerRole, setPlayerRole] = useState(null); // 'r' or 'b' or null
+  const [playerRole, setPlayerRole] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -22,7 +27,6 @@ const GamePage = () => {
       const currentUserId = user?.user?.id;
       setUserId(currentUserId);
 
-      // Fetch game data
       let { data: gameData, error } = await supabase
         .from('games')
         .select('*')
@@ -35,17 +39,13 @@ const GamePage = () => {
       }
 
       if (gameData) {
-        // Auto assign player_red or player_black if empty
         if (!gameData.player_red) {
           const { error: updateError } = await supabase
             .from('games')
             .update({ player_red: currentUserId })
             .eq('id', gameId);
           if (!updateError) gameData.player_red = currentUserId;
-        } else if (
-          !gameData.player_black &&
-          gameData.player_red !== currentUserId
-        ) {
+        } else if (!gameData.player_black && gameData.player_red !== currentUserId) {
           const { error: updateError } = await supabase
             .from('games')
             .update({ player_black: currentUserId })
@@ -54,20 +54,18 @@ const GamePage = () => {
         }
 
         setGame(gameData);
-
-        // Determine playerRole based on logged-in user
         if (currentUserId === gameData.player_red) setPlayerRole('r');
         else if (currentUserId === gameData.player_black) setPlayerRole('b');
-        else setPlayerRole(null); // spectator
+        else setPlayerRole(null);
       }
     };
 
     fetchGame();
   }, [gameId]);
-//working Use Effect
+
   useEffect(() => {
     if (!gameId) return;
-  
+
     const channel = supabase
       .channel('game-updates')
       .on(
@@ -84,53 +82,32 @@ const GamePage = () => {
         }
       )
       .subscribe();
-  
+
     return () => {
       supabase.removeChannel(channel);
     };
   }, [gameId]);
-  
-  
-  
 
   const isMyTurn = () => {
     if (!game || !userId || !playerRole) return false;
     return game.turn === playerRole;
   };
 
-  const isValidMove = (srcRow, srcCol, destRow, destCol) => {
-    const piece = game.board_state[srcRow][srcCol];
-    if (!piece || game.board_state[destRow][destCol]) return false;
-
-    // Only allow moving your own pieces
-    if (piece.toLowerCase() !== playerRole) return false;
-
-    const dir = piece.toLowerCase() === 'r' ? -1 : 1;
-    const diffRow = destRow - srcRow;
-    const diffCol = destCol - srcCol;
-
-    // Basic move: diagonal by 1 step forward only
-    return Math.abs(diffCol) === 1 && diffRow === dir;
-  };
-
   const movePiece = async (srcRow, srcCol, destRow, destCol) => {
     setLoading(true);
 
-    console.log(`Moving piece from (${srcRow},${srcCol}) to (${destRow},${destCol})`);
-    console.log('Current turn:', game.turn, 'Player role:', playerRole);
-
-    const newBoard = game.board_state.map((row) => [...row]);
-    const piece = newBoard[srcRow][srcCol];
-    newBoard[srcRow][srcCol] = null;
-    newBoard[destRow][destCol] = piece;
-
+    const newBoard = applyMove(game.board_state, srcRow, srcCol, destRow, destCol);
     const nextTurn = game.turn === 'r' ? 'b' : 'r';
+
+    const winner = checkWinCondition(newBoard);
 
     const { error } = await supabase
       .from('games')
       .update({
         board_state: newBoard,
-        turn: nextTurn,
+        turn: winner ? null : nextTurn,
+        status: winner ? 'won' : game.status,
+        winner: winner || null,
       })
       .eq('id', gameId);
 
@@ -138,11 +115,12 @@ const GamePage = () => {
       console.error('Error updating move:', error);
       alert('Failed to move piece. Please try again.');
     } else {
-      // Update local state immediately to reflect move
       setGame((prev) => ({
         ...prev,
         board_state: newBoard,
-        turn: nextTurn,
+        turn: winner ? null : nextTurn,
+        status: winner ? 'won' : prev.status,
+        winner: winner || null,
       }));
     }
 
@@ -150,12 +128,12 @@ const GamePage = () => {
   };
 
   const handleSquareClick = (row, col) => {
-    if (!game || !isMyTurn() || loading) return;
+    if (!game || !isMyTurn() || loading || game.status === 'won') return;
     const piece = game.board_state[row][col];
 
     if (selected) {
       const [srcRow, srcCol] = selected;
-      if (isValidMove(srcRow, srcCol, row, col)) {
+      if (isValidMove(game.board_state, playerRole, srcRow, srcCol, row, col)) {
         movePiece(srcRow, srcCol, row, col);
       }
       setSelected(null);
@@ -164,10 +142,8 @@ const GamePage = () => {
     }
   };
 
-  // Delete active game from active_games table
   const deleteActiveGame = async () => {
     if (!gameId) return;
-
     const { error } = await supabase
       .from('active_games')
       .delete()
@@ -178,21 +154,17 @@ const GamePage = () => {
     }
   };
 
-  // Forfeit handler: delete active game, update status, redirect home
   const handleForfeit = async () => {
     setLoading(true);
     await deleteActiveGame();
-
     await supabase
       .from('games')
-      .update({ status: 'forfeited' }) // Optional: track game status
+      .update({ status: 'forfeited' })
       .eq('id', gameId);
-
     setLoading(false);
     router.push('/');
   };
 
-  // Logout function
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push('/');
@@ -216,7 +188,7 @@ const GamePage = () => {
           <div
             className={`w-8 h-8 rounded-full ${
               piece.toLowerCase() === 'r' ? 'bg-red-500' : 'bg-black'
-            }`}
+            } ${piece === piece.toUpperCase() ? 'ring-4 ring-white' : ''}`}
           />
         )}
       </div>
@@ -232,7 +204,6 @@ const GamePage = () => {
       ))}
     </div>
   );
-
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 px-4">
@@ -256,11 +227,18 @@ const GamePage = () => {
             : 'Spectator'}
         </span>
       </p>
-      <p className="mb-4">{isMyTurn() ? "Your turn" : "Opponent's turn"}</p>
+      <p className="mb-4">
+        {game?.status === 'won'
+          ? game?.winner === playerRole
+            ? 'You won!'
+            : 'You lost!'
+          : isMyTurn()
+          ? "Your turn"
+          : "Opponent's turn"}
+      </p>
       {renderBoard()}
 
-      {/* Forfeit Button */}
-      {(playerRole === 'r' || playerRole === 'b') && (
+      {(playerRole === 'r' || playerRole === 'b') && game?.status !== 'won' && (
         <button
           onClick={handleForfeit}
           disabled={loading}
