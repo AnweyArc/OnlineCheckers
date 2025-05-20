@@ -201,67 +201,111 @@ const GamePage = () => {
   };
 
   const renderBoard = () => (
-    <div className="flex flex-col border-4 border-black">
-      {Array.from({ length: boardSize }).map((_, row) => (
-        <div key={row} className="flex">
-          {Array.from({ length: boardSize }).map((_, col) => renderSquare(row, col))}
-        </div>
-      ))}
-    </div>
-  );
-
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 px-4">
-      <div className="w-full max-w-md flex justify-between items-center px-4 py-3 bg-white shadow-md mb-4 rounded">
-        <h1 className="text-2xl font-bold">Game ID: {gameId?.slice(0, 6)}...</h1>
-        <button
-          onClick={handleLogout}
-          className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-        >
-          Logout
-        </button>
+    <div className="relative p-8 bg-amber-800 rounded-xl shadow-2xl">
+      <div className="absolute inset-0 rounded-xl shadow-inner" />
+      <div className="relative border-4 border-amber-900 rounded-lg overflow-hidden">
+        {Array.from({ length: boardSize }).map((_, row) => (
+          <div key={row} className="flex">
+            {Array.from({ length: boardSize }).map((_, col) => renderSquare(row, col))}
+          </div>
+        ))}
       </div>
-
-      <p className="mb-2">
-        You are playing as:{' '}
-        <span className={playerRole === 'r' ? 'text-red-600' : 'text-black'}>
-          {playerRole === 'r' ? 'Red' : playerRole === 'b' ? 'Black' : 'Spectator'}
-        </span>
-      </p>
-      <p className="mb-4">
-        {game?.status === 'won'
-          ? game?.winner === playerRole
-            ? 'You won!'
-            : 'You lost!'
-          : isMyTurn()
-          ? "Your turn"
-          : "Opponent's turn"}
-      </p>
-
-      {renderBoard()}
-
-{(playerRole === 'r' || playerRole === 'b') && game?.status !== 'won' && (
-  <button
-    onClick={handleForfeit}
-    disabled={loading}
-    className="mt-6 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
-  >
-    {loading ? 'Processing...' : 'Forfeit Game'}
-  </button>
-)}
-
-{game?.status === 'won' && (
-  <button
-    onClick={() => router.push('/')}
-    className="mt-6 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-  >
-    Go back to lobby
-  </button>
-)}
-
+      
+      {/* Board frame details */}
+      <div className="absolute top-0 left-0 right-0 h-4 bg-amber-900 rounded-t-xl" />
+      <div className="absolute bottom-0 left-0 right-0 h-4 bg-amber-900 rounded-b-xl" />
+      <div className="absolute left-0 top-0 bottom-0 w-4 bg-amber-900 rounded-l-xl" />
+      <div className="absolute right-0 top-0 bottom-0 w-4 bg-amber-900 rounded-r-xl" />
     </div>
   );
-};
-
+  
+  return (
+    <div className="min-h-screen bg-gradient-to-r from-amber-50 to-amber-100 flex flex-col items-center justify-center p-4">
+      <div className="w-full max-w-2xl bg-amber-800 rounded-xl shadow-2xl px-6 py-4 mb-6 relative">
+        <div className="absolute inset-0 rounded-xl shadow-inner" />
+        <div className="flex flex-col sm:flex-row justify-between items-center relative z-10">
+          <h1 className="text-2xl font-bold text-amber-100 mb-2 sm:mb-0">
+            Game ID: <span className="text-amber-300">{gameId?.slice(0, 6)}...</span>
+          </h1>
+          <button
+            onClick={handleLogout}
+            className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-all transform hover:scale-[1.02]"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clipRule="evenodd" />
+            </svg>
+            Logout
+          </button>
+        </div>
+      </div>
+  
+      <div className="space-y-4 mb-8 text-center">
+        <div className="inline-block bg-amber-100 px-6 py-2 rounded-full shadow-md">
+          <p className="text-lg font-semibold text-amber-800">
+            Playing as: {' '}
+            <span className={`px-3 py-1 rounded-full ${playerRole === 'r' ? 'bg-red-500 text-white' : 'bg-gray-800 text-white'}`}>
+              {playerRole === 'r' ? 'Red' : playerRole === 'b' ? 'Black' : 'Spectator'}
+            </span>
+          </p>
+        </div>
+        
+        <div className={`text-xl font-bold ${
+          game?.status === 'won' 
+            ? (game?.winner === playerRole ? 'text-green-600' : 'text-red-600')
+            : (isMyTurn() ? 'text-amber-700 animate-pulse' : 'text-gray-600')
+        }`}>
+          {game?.status === 'won' ? (
+            <div className="flex items-center justify-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                {game?.winner === playerRole ? (
+                  <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                ) : (
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                )}
+              </svg>
+              {game?.winner === playerRole ? 'Victory!' : 'Defeat!'}
+            </div>
+          ) : isMyTurn() ? (
+            <div className="flex items-center gap-2 justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Your Move!
+            </div>
+          ) : (
+            "Opponent's Turn"
+          )}
+        </div>
+      </div>
+  
+      {renderBoard()}
+  
+      {(playerRole === 'r' || playerRole === 'b') && game?.status !== 'won' && (
+        <button
+          onClick={handleForfeit}
+          disabled={loading}
+          className="mt-6 px-6 py-2 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white rounded-lg font-medium transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 flex items-center gap-2"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+          </svg>
+          {loading ? 'Processing...' : 'Forfeit Game'}
+        </button>
+      )}
+  
+      {game?.status === 'won' && (
+        <button
+          onClick={() => router.push('/')}
+          className="mt-6 px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg font-medium transition-all transform hover:scale-[1.02] flex items-center gap-2"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+          </svg>
+          Go back to lobby
+        </button>
+      )}
+    </div>
+);
+}
 export default GamePage;
 //working but winning condition is still not complete

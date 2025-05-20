@@ -154,25 +154,51 @@ export default function Homescreen() {
   };
 
   const renderBoardPreview = () => (
-    <div className="flex flex-col border-4 border-black scale-75">
-      {Array(boardSize).fill(null).map((_, row) => (
-        <div key={row} className="flex">
-          {Array(boardSize).fill(null).map((_, col) => {
-            const isEven = (row + col) % 2 === 0;
-            const squareColor = isEven ? 'bg-gray-300' : 'bg-gray-600';
-            const board = createInitialBoard();
-            const piece = board[row][col];
-
-            return (
-              <div key={`${row}-${col}`} className={`w-10 h-10 flex items-center justify-center ${squareColor}`}>
-                {piece && (
-                  <div className={`w-6 h-6 rounded-full ${piece === 'r' ? 'bg-red-500' : 'bg-black'}`} />
-                )}
-              </div>
-            );
-          })}
-        </div>
-      ))}
+    <div className="relative p-8 bg-amber-800 rounded-xl shadow-2xl">
+      <div className="absolute inset-0 rounded-xl shadow-inner" />
+      <div className="relative border-4 border-amber-900 rounded-lg overflow-hidden">
+        {Array(boardSize).fill(null).map((_, row) => (
+          <div key={row} className="flex">
+            {Array(boardSize).fill(null).map((_, col) => {
+              const isEven = (row + col) % 2 === 0;
+              const board = createInitialBoard();
+              const piece = board[row][col];
+  
+              return (
+                <div
+                  key={`${row}-${col}`}
+                  className={`relative w-12 h-12 flex items-center justify-center
+                    ${isEven 
+                      ? 'bg-gradient-to-br from-amber-100 to-amber-300'
+                      : 'bg-gradient-to-br from-amber-800 to-amber-900'}
+                    transition-all duration-200 hover:brightness-110`}
+                >
+                  {/* Square texture */}
+                  <div className={`absolute inset-0 opacity-20 ${isEven ? 'bg-white' : 'bg-black'}`} />
+                  
+                  {piece && (
+                    <div className={`relative z-10 w-8 h-8 rounded-full shadow-lg
+                      ${piece === 'r' 
+                        ? 'bg-gradient-to-br from-red-500 to-red-700 ring-2 ring-red-200'
+                        : 'bg-gradient-to-br from-gray-800 to-black ring-2 ring-gray-300'}
+                      before:absolute before:inset-0 before:rounded-full
+                      ${piece === 'r' 
+                        ? 'before:bg-radial-gradient(at_30%_30%, rgba(255,255,255,0.3), transparent)'
+                        : 'before:bg-radial-gradient(at_30%_30%, rgba(255,255,255,0.2), transparent)'}`}
+                    />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+      
+      {/* Board frame details */}
+      <div className="absolute top-0 left-0 right-0 h-4 bg-amber-900 rounded-t-xl" />
+      <div className="absolute bottom-0 left-0 right-0 h-4 bg-amber-900 rounded-b-xl" />
+      <div className="absolute left-0 top-0 bottom-0 w-4 bg-amber-900 rounded-l-xl" />
+      <div className="absolute right-0 top-0 bottom-0 w-4 bg-amber-900 rounded-r-xl" />
     </div>
   );
 
