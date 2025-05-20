@@ -66,23 +66,30 @@ const GamePage = () => {
   }, [gameId]);
 
   useEffect(() => {
-    if (!router.isReady) return;
+    if (!gameId) return;
   
-    const fetchGame = async () => {
-      const { data: user } = await supabase.auth.getUser();
-      setUserId(user?.user?.id);
+    const channel = supabase
+      .channel('game-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'games',
+          filter: `id=eq.${gameId}`,
+        },
+        (payload) => {
+          const updatedGame = payload.new;
+          setGame(updatedGame);
+        }
+      )
+      .subscribe();
   
-      const { data, error } = await supabase
-        .from('games')
-        .select('*')
-        .eq('id', router.query.id)
-        .single();
-  
-      if (data) setGame(data);
+    return () => {
+      supabase.removeChannel(channel);
     };
+  }, [gameId]);
   
-    fetchGame();
-  }, [router.isReady]);
   
   
 
