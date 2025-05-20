@@ -240,15 +240,25 @@ const GamePage = () => {
 
       {renderBoard()}
 
-      {(playerRole === 'r' || playerRole === 'b') && game?.status !== 'won' && (
-        <button
-          onClick={handleForfeit}
-          disabled={loading}
-          className="mt-6 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
-        >
-          {loading ? 'Processing...' : 'Forfeit Game'}
-        </button>
-      )}
+{(playerRole === 'r' || playerRole === 'b') && game?.status !== 'won' && (
+  <button
+    onClick={handleForfeit}
+    disabled={loading}
+    className="mt-6 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+  >
+    {loading ? 'Processing...' : 'Forfeit Game'}
+  </button>
+)}
+
+{game?.status === 'won' && (
+  <button
+    onClick={() => router.push('/')}
+    className="mt-6 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+  >
+    Go back to lobby
+  </button>
+)}
+
     </div>
   );
 };
