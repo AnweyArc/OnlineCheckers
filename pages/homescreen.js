@@ -207,6 +207,7 @@ export default function Homescreen() {
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl px-8 py-10">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome to Online Checkers</h1>
+          <h4 className="text-lg text-gray-400">Made By: Anwey</h4>
           <p className="text-lg text-gray-600">Hello, <span className="text-blue-600 font-medium">{displayName}</span>!</p>
         </div>
   
