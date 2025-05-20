@@ -2,7 +2,7 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabaseClient';
-import { applyMove, isValidMove, getWinner as checkWinCondition } from '../../lib/checkersLogic';
+import { applyMove, isValidMove, checkWinCondition } from '../../lib/checkersLogic';
 
 const boardSize = 8;
 
@@ -93,15 +93,21 @@ const GamePage = () => {
     setLoading(true);
 
     const newBoard = applyMove(game.board_state, srcRow, srcCol, destRow, destCol);
-    const nextTurn = game.turn === 'r' ? 'b' : 'r';
+
+    if (!newBoard) {
+      alert('Invalid move!');
+      setLoading(false);
+      return;
+    }
 
     const winner = checkWinCondition(newBoard);
+    const nextTurn = winner ? null : game.turn === 'r' ? 'b' : 'r';
 
     const { error } = await supabase
       .from('games')
       .update({
         board_state: newBoard,
-        turn: winner ? null : nextTurn,
+        turn: nextTurn,
         status: winner ? 'won' : game.status,
         winner: winner || null,
       })
@@ -109,17 +115,18 @@ const GamePage = () => {
 
     if (error) {
       console.error('Error updating move:', error);
-      alert('Failed to move piece. Please try again.');
+      alert('Failed to update move on server.');
     } else {
       setGame((prev) => ({
         ...prev,
         board_state: newBoard,
-        turn: winner ? null : nextTurn,
+        turn: nextTurn,
         status: winner ? 'won' : prev.status,
         winner: winner || null,
       }));
     }
 
+    setSelected(null);
     setLoading(false);
   };
 
@@ -131,6 +138,8 @@ const GamePage = () => {
       const [srcRow, srcCol] = selected;
       if (isValidMove(game.board_state, playerRole, srcRow, srcCol, row, col)) {
         movePiece(srcRow, srcCol, row, col);
+      } else {
+        alert('Invalid move!');
       }
       setSelected(null);
     } else if (piece?.toLowerCase() === playerRole) {
@@ -216,11 +225,7 @@ const GamePage = () => {
       <p className="mb-2">
         You are playing as:{' '}
         <span className={playerRole === 'r' ? 'text-red-600' : 'text-black'}>
-          {playerRole === 'r'
-            ? 'Red'
-            : playerRole === 'b'
-            ? 'Black'
-            : 'Spectator'}
+          {playerRole === 'r' ? 'Red' : playerRole === 'b' ? 'Black' : 'Spectator'}
         </span>
       </p>
       <p className="mb-4">
@@ -232,6 +237,7 @@ const GamePage = () => {
           ? "Your turn"
           : "Opponent's turn"}
       </p>
+
       {renderBoard()}
 
       {(playerRole === 'r' || playerRole === 'b') && game?.status !== 'won' && (
