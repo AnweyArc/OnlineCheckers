@@ -6,7 +6,7 @@ import {
   applyMove,
   isValidMove,
   checkWinCondition
-} from './checkersLogic';
+} from '../../lib/checkersLogic';
 
 const boardSize = 8;
 
