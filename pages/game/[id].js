@@ -64,7 +64,7 @@ const GamePage = () => {
 
     fetchGame();
   }, [gameId]);
-
+//working Use Effect
   useEffect(() => {
     if (!gameId) return;
   
