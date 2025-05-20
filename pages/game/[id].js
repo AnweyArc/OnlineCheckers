@@ -2,11 +2,7 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabaseClient';
-import {
-  applyMove,
-  isValidMove,
-  checkWinCondition
-} from '../../lib/checkersLogic';
+import { applyMove, isValidMove, getWinner as checkWinCondition } from '../../lib/checkersLogic';
 
 const boardSize = 8;
 
