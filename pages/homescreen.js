@@ -1,5 +1,3 @@
-//homescreen.js
-
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useRouter } from 'next/router';
@@ -24,15 +22,17 @@ const createInitialBoard = () => {
 export default function Homescreen() {
   const router = useRouter();
   const [userId, setUserId] = useState(null);
+  const [displayName, setDisplayName] = useState('');
   const [loading, setLoading] = useState(false);
   const [joinGameId, setJoinGameId] = useState('');
-  const [createGameId, setCreateGameId] = useState(''); // NEW: custom game id input
+  const [createGameId, setCreateGameId] = useState('');
 
   useEffect(() => {
     const checkUser = async () => {
       const { data } = await supabase.auth.getUser();
       if (data?.user) {
         setUserId(data.user.id);
+        setDisplayName(data.user.user_metadata?.display_name || 'Player');
       } else {
         router.push('/');
       }
@@ -51,7 +51,6 @@ export default function Homescreen() {
       return;
     }
 
-    // Simple validation: only letters, numbers, dashes, and underscores allowed
     if (!/^[a-zA-Z0-9-_]+$/.test(createGameId)) {
       alert('Game ID can only contain letters, numbers, dashes (-), and underscores (_).');
       return;
@@ -59,8 +58,7 @@ export default function Homescreen() {
 
     setLoading(true);
 
-    // Check if the game ID already exists
-    const { data: existingGame, error: existingError } = await supabase
+    const { data: existingGame } = await supabase
       .from('games')
       .select('id')
       .eq('id', createGameId.trim())
@@ -72,7 +70,6 @@ export default function Homescreen() {
       return;
     }
 
-    // Insert into games table with the custom ID
     const { data: gameData, error: gameError } = await supabase
       .from('games')
       .insert({
@@ -90,7 +87,6 @@ export default function Homescreen() {
       return;
     }
 
-    // Insert into active_games table
     const { error: activeGameError } = await supabase
       .from('active_games')
       .insert({ game_id: createGameId.trim() });
@@ -112,7 +108,6 @@ export default function Homescreen() {
     }
     setLoading(true);
 
-    // Check if game exists in active_games
     const { data: activeGameData, error: activeGameError } = await supabase
       .from('active_games')
       .select('*')
@@ -125,7 +120,6 @@ export default function Homescreen() {
       return;
     }
 
-    // Check if game in games table exists and if player_black is empty
     const { data: gameData, error: gameError } = await supabase
       .from('games')
       .select('*')
@@ -144,7 +138,6 @@ export default function Homescreen() {
       return;
     }
 
-    // Update the player_black slot
     const { error: updateError } = await supabase
       .from('games')
       .update({ player_black: userId })
@@ -184,53 +177,89 @@ export default function Homescreen() {
   );
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 px-4">
-      <h1 className="text-2xl font-bold mb-4">Welcome to Online Checkers</h1>
-
-      {renderBoardPreview()}
-
-      <div className="flex gap-4 mt-6 items-center">
-        <input
-          type="text"
-          placeholder="Create Game ID"
-          className="px-3 py-2 rounded border border-gray-400"
-          value={createGameId}
-          onChange={(e) => setCreateGameId(e.target.value)}
-          disabled={loading}
-        />
+    <div className="min-h-screen bg-gradient-to-r from-blue-50 to-indigo-50 flex flex-col items-center justify-center p-4">
+      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl px-8 py-10">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome to Online Checkers</h1>
+          <p className="text-lg text-gray-600">Hello, <span className="text-blue-600 font-medium">{displayName}</span>!</p>
+        </div>
+  
+        <div className="mb-10 flex justify-center">
+          {renderBoardPreview()}
+        </div>
+  
+        <div className="space-y-8">
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-700">Create New Game</h3>
+            <div className="flex gap-3 flex-col sm:flex-row">
+              <input
+                type="text"
+                placeholder="Enter game ID..."
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                value={createGameId}
+                onChange={(e) => setCreateGameId(e.target.value)}
+                disabled={loading}
+              />
+              <button
+                className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 whitespace-nowrap"
+                onClick={handleCreateGame}
+                disabled={loading}
+              >
+                {loading ? (
+                  <span>Creating...</span>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+                    </svg>
+                    Create Game
+                  </span>
+                )}
+              </button>
+            </div>
+          </div>
+  
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-700">Join Existing Game</h3>
+            <div className="flex gap-3 flex-col sm:flex-row">
+              <input
+                type="text"
+                placeholder="Enter game ID..."
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition"
+                value={joinGameId}
+                onChange={(e) => setJoinGameId(e.target.value)}
+                disabled={loading}
+              />
+              <button
+                className="w-full sm:w-auto bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-3 rounded-lg font-medium transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 whitespace-nowrap"
+                onClick={handleJoinGame}
+                disabled={loading}
+              >
+                {loading ? (
+                  <span>Joining...</span>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+                    </svg>
+                    Join Game
+                  </span>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+  
         <button
-          className="px-4 py-2 bg-blue-600 text-white rounded"
-          onClick={handleCreateGame}
-          disabled={loading}
+          className="mt-10 w-full sm:w-auto px-6 py-2.5 text-red-600 hover:text-red-700 font-medium rounded-lg transition-all hover:bg-red-50 flex items-center gap-2 justify-center"
+          onClick={handleLogout}
         >
-          {loading ? 'Creating...' : 'Create Game'}
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clipRule="evenodd" />
+          </svg>
+          Logout
         </button>
       </div>
-
-      <div className="flex gap-4 mt-6 items-center">
-        <input
-          type="text"
-          placeholder="Enter Game ID"
-          className="px-3 py-2 rounded border border-gray-400"
-          value={joinGameId}
-          onChange={(e) => setJoinGameId(e.target.value)}
-          disabled={loading}
-        />
-        <button
-          className="px-4 py-2 bg-green-600 text-white rounded"
-          onClick={handleJoinGame}
-          disabled={loading}
-        >
-          {loading ? 'Joining...' : 'Join Game'}
-        </button>
-      </div>
-
-      <button
-        className="mt-6 px-4 py-2 bg-red-500 text-white rounded"
-        onClick={handleLogout}
-      >
-        Logout
-      </button>
     </div>
   );
 }
