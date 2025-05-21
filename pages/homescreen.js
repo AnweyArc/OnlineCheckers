@@ -154,53 +154,58 @@ export default function Homescreen() {
   };
 
   const renderBoardPreview = () => (
-    <div className="relative p-8 bg-amber-800 rounded-xl shadow-2xl">
+    <div className="relative p-2 sm:p-4 bg-amber-800 rounded-xl shadow-2xl w-full max-w-full overflow-hidden">
       <div className="absolute inset-0 rounded-xl shadow-inner" />
-      <div className="relative border-4 border-amber-900 rounded-lg overflow-hidden">
-        {Array(boardSize).fill(null).map((_, row) => (
-          <div key={row} className="flex">
-            {Array(boardSize).fill(null).map((_, col) => {
-              const isEven = (row + col) % 2 === 0;
-              const board = createInitialBoard();
-              const piece = board[row][col];
   
-              return (
-                <div
-                  key={`${row}-${col}`}
-                  className={`relative w-12 h-12 flex items-center justify-center
-                    ${isEven 
-                      ? 'bg-gradient-to-br from-amber-100 to-amber-300'
-                      : 'bg-gradient-to-br from-amber-800 to-amber-900'}
-                    transition-all duration-200 hover:brightness-110`}
-                >
-                  {/* Square texture */}
-                  <div className={`absolute inset-0 opacity-20 ${isEven ? 'bg-white' : 'bg-black'}`} />
-                  
-                  {piece && (
-                    <div className={`relative z-10 w-8 h-8 rounded-full shadow-lg
-                      ${piece === 'r' 
-                        ? 'bg-gradient-to-br from-red-500 to-red-700 ring-2 ring-red-200'
-                        : 'bg-gradient-to-br from-gray-800 to-black ring-2 ring-gray-300'}
-                      before:absolute before:inset-0 before:rounded-full
-                      ${piece === 'r' 
-                        ? 'before:bg-radial-gradient(at_30%_30%, rgba(255,255,255,0.3), transparent)'
-                        : 'before:bg-radial-gradient(at_30%_30%, rgba(255,255,255,0.2), transparent)'}`}
-                    />
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        ))}
+      {/* Responsive board using CSS Grid */}
+      <div
+        className="relative border-4 border-amber-900 rounded-lg overflow-hidden mx-auto grid"
+        style={{
+          display: "grid",
+          gridTemplateColumns: `repeat(${boardSize}, 1fr)`,
+          width: "100%",
+          maxWidth: "min(90vw, 90vh)", // keep it within screen
+          aspectRatio: "1 / 1" // ensures perfect square board
+        }}
+      >
+        {Array(boardSize).fill(null).flatMap((_, row) =>
+          Array(boardSize).fill(null).map((_, col) => {
+            const isEven = (row + col) % 2 === 0;
+            const board = createInitialBoard();
+            const piece = board[row][col];
+  
+            return (
+              <div
+                key={`${row}-${col}`}
+                className={`relative w-full h-full flex items-center justify-center 
+                  ${isEven
+                    ? 'bg-gradient-to-br from-amber-100 to-amber-300'
+                    : 'bg-gradient-to-br from-amber-800 to-amber-900'}
+                  transition-all duration-200 hover:brightness-110`}
+              >
+                <div className={`absolute inset-0 opacity-20 ${isEven ? 'bg-white' : 'bg-black'}`} />
+                {piece && (
+                  <div className={`relative z-10 rounded-full shadow-lg w-[60%] h-[60%]
+                    ${piece === 'r'
+                      ? 'bg-gradient-to-br from-red-500 to-red-700 ring-2 ring-red-200'
+                      : 'bg-gradient-to-br from-gray-800 to-black ring-2 ring-gray-300'}`}
+                  />
+                )}
+              </div>
+            );
+          })
+        )}
       </div>
-      
-      {/* Board frame details */}
-      <div className="absolute top-0 left-0 right-0 h-4 bg-amber-900 rounded-t-xl" />
-      <div className="absolute bottom-0 left-0 right-0 h-4 bg-amber-900 rounded-b-xl" />
-      <div className="absolute left-0 top-0 bottom-0 w-4 bg-amber-900 rounded-l-xl" />
-      <div className="absolute right-0 top-0 bottom-0 w-4 bg-amber-900 rounded-r-xl" />
+  
+      {/* Optional board frame decorations */}
+      <div className="absolute top-0 left-0 right-0 h-2 sm:h-4 bg-amber-900 rounded-t-xl" />
+      <div className="absolute bottom-0 left-0 right-0 h-2 sm:h-4 bg-amber-900 rounded-b-xl" />
+      <div className="absolute left-0 top-0 bottom-0 w-2 sm:w-4 bg-amber-900 rounded-l-xl" />
+      <div className="absolute right-0 top-0 bottom-0 w-2 sm:w-4 bg-amber-900 rounded-r-xl" />
     </div>
   );
+  
+  
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-50 to-indigo-50 flex flex-col items-center justify-center p-4">

@@ -180,42 +180,64 @@ const GamePage = () => {
     const squareColor = isEven ? 'bg-gray-300' : 'bg-gray-600';
     const piece = game?.board_state?.[row]?.[col];
     const isSelected = selected && selected[0] === row && selected[1] === col;
-
+  
     return (
       <div
         key={`${row}-${col}`}
-        className={`w-12 h-12 flex items-center justify-center ${squareColor} ${
-          isSelected ? 'border-4 border-yellow-400' : ''
-        }`}
+        className={`
+          aspect-square w-full h-full flex items-center justify-center 
+          ${squareColor} 
+          ${isSelected ? 'border-4 border-yellow-400' : ''}
+          transition-all duration-200
+        `}
         onClick={() => handleSquareClick(row, col)}
       >
         {piece && (
           <div
-            className={`w-8 h-8 rounded-full ${
-              piece.toLowerCase() === 'r' ? 'bg-red-500' : 'bg-black'
-            } ${piece === piece.toUpperCase() ? 'ring-4 ring-white' : ''}`}
+            className={`
+              rounded-full shadow-md
+              ${piece.toLowerCase() === 'r'
+                ? 'bg-gradient-to-br from-red-400 to-red-700'
+                : 'bg-gradient-to-br from-gray-700 to-black'}
+              ${piece === piece.toUpperCase() ? 'ring-4 ring-yellow-300' : ''}
+              w-6 h-6 sm:w-7 sm:h-7 md:w-9 md:h-9 lg:w-10 lg:h-10
+              transition-transform duration-300 transform hover:scale-105
+            `}
           />
         )}
       </div>
     );
   };
+  
 
   const renderBoard = () => (
-    <div className="relative p-8 bg-amber-800 rounded-xl shadow-2xl">
+    <div className="relative p-2 sm:p-4 bg-amber-800 rounded-xl shadow-2xl w-full max-w-full overflow-hidden">
       <div className="absolute inset-0 rounded-xl shadow-inner" />
-      <div className="relative border-4 border-amber-900 rounded-lg overflow-hidden">
-        {Array.from({ length: boardSize }).map((_, row) => (
-          <div key={row} className="flex">
-            {Array.from({ length: boardSize }).map((_, col) => renderSquare(row, col))}
-          </div>
-        ))}
+  
+      {/* Responsive grid board */}
+      <div
+        className="relative border-4 border-amber-900 rounded-lg overflow-hidden mx-auto grid"
+        style={{
+          display: "grid",
+          gridTemplateColumns: `repeat(${boardSize}, 1fr)`,
+          width: "100%",
+          maxWidth: "min(90vw, 90vh)",
+          aspectRatio: "1 / 1",
+        }}
+      >
+        {Array.from({ length: boardSize }).flatMap((_, row) =>
+          Array.from({ length: boardSize }).map((_, col) => renderSquare(row, col))
+        )}
       </div>
-      <div className="absolute top-0 left-0 right-0 h-4 bg-amber-900 rounded-t-xl" />
-      <div className="absolute bottom-0 left-0 right-0 h-4 bg-amber-900 rounded-b-xl" />
-      <div className="absolute left-0 top-0 bottom-0 w-4 bg-amber-900 rounded-l-xl" />
-      <div className="absolute right-0 top-0 bottom-0 w-4 bg-amber-900 rounded-r-xl" />
+  
+      {/* Optional board frame decorations */}
+      <div className="absolute top-0 left-0 right-0 h-2 sm:h-4 bg-amber-900 rounded-t-xl" />
+      <div className="absolute bottom-0 left-0 right-0 h-2 sm:h-4 bg-amber-900 rounded-b-xl" />
+      <div className="absolute left-0 top-0 bottom-0 w-2 sm:w-4 bg-amber-900 rounded-l-xl" />
+      <div className="absolute right-0 top-0 bottom-0 w-2 sm:w-4 bg-amber-900 rounded-r-xl" />
     </div>
   );
+  
 
   const renderStatus = () => {
     if (!game) return null;
