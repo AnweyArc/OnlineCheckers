@@ -248,26 +248,31 @@ const GamePage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-amber-50 to-amber-100 flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-2xl bg-amber-800 rounded-xl shadow-2xl px-6 py-4 mb-6 relative">
+      <div className="w-full max-w-2xl bg-amber-800 rounded-xl shadow-2xl px-4 md:px-6 py-3 md:py-4 mb-4 md:mb-6 relative">
         <div className="absolute inset-0 rounded-xl shadow-inner" />
         <div className="flex flex-col sm:flex-row justify-between items-center relative z-10">
-          <h1 className="text-2xl font-bold text-amber-100 mb-2 sm:mb-0">
+          <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-amber-100 mb-2 sm:mb-0 text-center">
             Game ID: <span className="text-amber-300">{gameId?.slice(0, 6)}...</span>
           </h1>
           <button
             onClick={handleLogout}
-            className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-all transform hover:scale-[1.02]"
+            className="text-sm md:text-base bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-3 md:px-4 py-1 md:py-2 rounded-lg flex items-center gap-2 transition-all transform hover:scale-[1.02]"
           >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 md:h-5 md:w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clipRule="evenodd" />
+            </svg>
             Logout
           </button>
         </div>
       </div>
 
-      <div className="space-y-4 mb-8 text-center">
-        <div className="inline-block bg-amber-100 px-6 py-2 rounded-full shadow-md">
-          <p className="text-lg font-semibold text-amber-800">
+      <div className="space-y-3 md:space-y-4 mb-4 md:mb-8 text-center">
+        <div className="inline-block bg-amber-100 px-4 py-1 md:px-6 md:py-2 rounded-full shadow-md">
+          <p className="text-base md:text-lg font-semibold text-amber-800">
             Playing as:{' '}
-            <span className={`px-3 py-1 rounded-full ${playerRole === 'r' ? 'bg-red-500 text-white' : 'bg-gray-800 text-white'}`}>
+            <span className={`px-2 py-1 md:px-3 md:py-1 rounded-full ${
+              playerRole === 'r' ? 'bg-red-500' : 'bg-gray-800'
+            } text-white text-sm md:text-base`}>
               {playerRole === 'r' ? 'Red' : playerRole === 'b' ? 'Black' : 'Spectator'}
             </span>
           </p>
@@ -281,8 +286,11 @@ const GamePage = () => {
         <button
           onClick={handleForfeit}
           disabled={loading}
-          className="mt-6 px-6 py-2 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white rounded-lg font-medium transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 flex items-center gap-2"
+          className="mt-4 md:mt-6 px-4 py-1.5 md:px-6 md:py-2 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white rounded-lg font-medium transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 flex items-center gap-2 text-sm md:text-base"
         >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 md:h-5 md:w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+          </svg>
           Forfeit
         </button>
       )}
