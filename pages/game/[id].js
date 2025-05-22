@@ -39,7 +39,7 @@ const GamePage = () => {
         if (!gameData.player_red) {
           const { error: updateError } = await supabase
             .from('games')
-            .update({ player_red: currentUserId })
+            .update({ player_red: currentUserId,  })
             .eq('id', gameId);
           if (!updateError) gameData.player_red = currentUserId;
         } else if (!gameData.player_black && gameData.player_red !== currentUserId) {
@@ -127,14 +127,16 @@ const GamePage = () => {
     const nextTurn = winner ? null : game.turn === 'r' ? 'b' : 'r';
 
     const { error } = await supabase
-      .from('games')
-      .update({
-        board_state: newBoard,
-        turn: nextTurn,
-        status: winner ? 'won' : game.status,
-        winner: winner || null,
-      })
-      .eq('id', gameId);
+  .from('games')
+  .update({
+    board_state: newBoard,
+    turn: nextTurn,
+    status: winner ? 'won' : game.status,
+    winner: winner || null,
+    turn_started_at: winner ? null : new Date().toISOString(), // 👈 Add this line
+  })
+  .eq('id', gameId);
+
 
     if (error) {
       console.error('Error updating move:', error);
@@ -156,11 +158,13 @@ const GamePage = () => {
   const skipTurn = async () => {
     const nextTurn = game.turn === 'r' ? 'b' : 'r';
     const { error } = await supabase
-      .from('games')
-      .update({
-        turn: nextTurn,
-      })
-      .eq('id', gameId);
+  .from('games')
+  .update({
+    turn: nextTurn,
+    turn_started_at: new Date().toISOString(), // 👈 Add this line
+  })
+  .eq('id', gameId);
+
   
     if (error) {
       console.error('Failed to skip turn:', error);
@@ -302,6 +306,12 @@ const GamePage = () => {
   const renderStatus = () => {
     if (!game) return null;
   
+    const calculateOpponentTimeLeft = () => {
+      if (!game.turn_started_at) return null;
+      const elapsed = Math.floor((Date.now() - new Date(game.turn_started_at).getTime()) / 1000);
+      return Math.max(0, 30 - elapsed); // assuming 30s turn limit
+    };
+  
     if (game.status === 'won') {
       const isWinner = game.winner === playerRole;
       return (
@@ -347,15 +357,16 @@ const GamePage = () => {
         </div>
       );
     } else {
+      const opponentTimeLeft = calculateOpponentTimeLeft();
       return (
         <div className="flex flex-col items-center justify-center gap-1">
           <div className="text-xl font-bold text-gray-600">Opponent's Turn</div>
-          <p className="text-sm text-gray-700">Opponent's Remaining Time: {timeLeft}s</p>
+          <p className="text-sm text-gray-700">Opponent's Remaining Time: {opponentTimeLeft}s</p>
         </div>
       );
     }
-    return <div className="text-xl font-bold text-gray-600">Opponent's Turn</div>;
   };
+  
   
   
 
