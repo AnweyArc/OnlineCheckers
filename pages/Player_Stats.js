@@ -34,25 +34,27 @@ export default function PlayerStats() {
       let wins = 0, losses = 0, forfeits = 0;
   
       games.forEach((game) => {
-        const isRed = game.player_red === user.id;
-        const isBlack = game.player_black === user.id;
-  
+        const isRed = `${game.player_red}` === `${user.id}`;
+        const isBlack = `${game.player_black}` === `${user.id}`;
+      
+        // Forfeit condition
+        if ((isRed && game.forfeited_by === 'r') || (isBlack && game.forfeited_by === 'b')) {
+          forfeits++;
+        }
+      
+        if (!game.winner) return;
+      
         // Win condition
         if ((game.winner === 'r' && isRed) || (game.winner === 'b' && isBlack)) {
           wins++;
         }
-  
+      
         // Loss condition
         if ((game.winner === 'r' && isBlack) || (game.winner === 'b' && isRed)) {
           losses++;
         }
-  
-        // Forfeit condition
-        if (game.forfeited_by?.toString() === user.id.toString()) {
-          forfeits++;
-        }
-        
       });
+      
   
       setStats({ total: games.length, wins, losses, forfeits });
       setLoading(false);
