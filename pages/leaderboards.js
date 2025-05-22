@@ -1,3 +1,5 @@
+//leaderboards.js
+
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useRouter } from 'next/router';
@@ -25,26 +27,42 @@ export default function Leaderboards() {
       const stats = {};
 
       games.forEach(({ winner, player_red, player_black, forfeited_by }) => {
-        const loser = winner === player_red ? player_black : player_red;
-
-        // Wins
-        if (isUUID(winner)) {
-          stats[winner] = stats[winner] || { wins: 0, losses: 0, forfeits: 0 };
-          stats[winner].wins += 1;
+        let winnerId = null;
+        let loserId = null;
+      
+        if (winner === 'r') {
+          winnerId = player_red;
+          loserId = player_black;
+        } else if (winner === 'b') {
+          winnerId = player_black;
+          loserId = player_red;
         }
-
-        // Losses
-        if (isUUID(loser)) {
-          stats[loser] = stats[loser] || { wins: 0, losses: 0, forfeits: 0 };
-          stats[loser].losses += 1;
+      
+        if (isUUID(winnerId)) {
+          stats[winnerId] = stats[winnerId] || { wins: 0, losses: 0, forfeits: 0 };
+          stats[winnerId].wins += 1;
         }
-
-        // Forfeits
-        if (isUUID(forfeited_by)) {
-          stats[forfeited_by] = stats[forfeited_by] || { wins: 0, losses: 0, forfeits: 0 };
-          stats[forfeited_by].forfeits += 1;
+      
+        if (isUUID(loserId)) {
+          stats[loserId] = stats[loserId] || { wins: 0, losses: 0, forfeits: 0 };
+          stats[loserId].losses += 1;
+        }
+      
+        if (forfeited_by === 'r') {
+          const redId = player_red;
+          if (isUUID(redId)) {
+            stats[redId] = stats[redId] || { wins: 0, losses: 0, forfeits: 0 };
+            stats[redId].forfeits += 1;
+          }
+        } else if (forfeited_by === 'b') {
+          const blackId = player_black;
+          if (isUUID(blackId)) {
+            stats[blackId] = stats[blackId] || { wins: 0, losses: 0, forfeits: 0 };
+            stats[blackId].forfeits += 1;
+          }
         }
       });
+      
 
       const sortedPlayers = Object.entries(stats)
         .sort(([, a], [, b]) => b.wins - a.wins)
@@ -94,32 +112,47 @@ export default function Leaderboards() {
           <p className="text-center text-sky-400 italic">Fetching rankings...</p>
         ) : (
           <ol className="space-y-3">
-            {leaders.map(({ rank, name, wins, losses, forfeits }) => (
-              <li
-                key={rank}
-                className="group flex justify-between items-center px-4 py-3 rounded-lg transition-all hover:bg-sky-50"
-              >
-                <div className="flex items-center space-x-4">
-                  <span className="text-sky-400 font-medium w-6">#{rank}</span>
-                  <span className="text-sky-900 font-medium">{name}</span>
-                </div>
-                <div className="flex space-x-4">
-                  <div className="flex items-center space-x-1 text-green-500">
-                    <span className="text-sm bg-green-100 p-1 rounded-full">🏆</span>
-                    <span className="text-sm text-green-700">{wins}</span>
-                  </div>
-                  <div className="flex items-center space-x-1 text-rose-500">
-                    <span className="text-sm bg-rose-100 p-1 rounded-full">❌</span>
-                    <span className="text-sm text-rose-700">{losses}</span>
-                  </div>
-                  <div className="flex items-center space-x-1 text-amber-500">
-                    <span className="text-sm bg-amber-100 p-1 rounded-full">🚫</span>
-                    <span className="text-sm text-amber-700">{forfeits}</span>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ol>
+  {leaders.map(({ rank, name, wins, losses, forfeits }) => {
+    const renderRankIcon = () => {
+      switch (rank) {
+        case 1:
+          return <span className="text-amber-500 text-lg">🥇</span>;
+        case 2:
+          return <span className="text-gray-400 text-lg">🥈</span>;
+        case 3:
+          return <span className="text-yellow-700 text-lg">🥉</span>;
+        default:
+          return <span className="text-sky-400 font-medium w-6">#{rank}</span>;
+      }
+    };
+
+    return (
+      <li
+        key={rank}
+        className="group flex justify-between items-center px-4 py-3 rounded-lg transition-all hover:bg-sky-50"
+      >
+        <div className="flex items-center space-x-4">
+          {renderRankIcon()}
+          <span className="text-sky-900 font-medium">{name}</span>
+        </div>
+        <div className="flex space-x-4">
+          <div className="flex items-center space-x-1 text-green-500">
+            <span className="text-sm bg-green-100 p-1 rounded-full">🏆</span>
+            <span className="text-sm text-green-700">{wins}</span>
+          </div>
+          <div className="flex items-center space-x-1 text-rose-500">
+            <span className="text-sm bg-rose-100 p-1 rounded-full">❌</span>
+            <span className="text-sm text-rose-700">{losses}</span>
+          </div>
+          <div className="flex items-center space-x-1 text-amber-500">
+            <span className="text-sm bg-amber-100 p-1 rounded-full">🚫</span>
+            <span className="text-sm text-amber-700">{forfeits}</span>
+          </div>
+        </div>
+      </li>
+    );
+  })}
+</ol>
         )}
 
         <div className="mt-8 border-t border-sky-100 pt-6">
