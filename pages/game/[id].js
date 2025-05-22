@@ -14,6 +14,7 @@ const GamePage = () => {
   const [selected, setSelected] = useState(null);
   const [playerRole, setPlayerRole] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(60); // 60 seconds timer
 
   useEffect(() => {
     const fetchGame = async () => {
@@ -84,6 +85,28 @@ const GamePage = () => {
     };
   }, [gameId]);
 
+  useEffect(() => {
+    if (!game || !playerRole) return;
+  
+    // Only start the timer if it's *this player's* turn and game is active
+    if (game.turn !== playerRole || game.status !== 'active') return;
+  
+    setTimeLeft(60);
+    const interval = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          skipTurn(); // Automatically skip turn when timer runs out
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  
+    return () => clearInterval(interval);
+  }, [game?.turn, playerRole, game?.status]);
+  
+  
   const isMyTurn = () => {
     if (!game || !userId || !playerRole) return false;
     return game.turn === playerRole;
@@ -129,6 +152,26 @@ const GamePage = () => {
     setSelected(null);
     setLoading(false);
   };
+
+  const skipTurn = async () => {
+    const nextTurn = game.turn === 'r' ? 'b' : 'r';
+    const { error } = await supabase
+      .from('games')
+      .update({
+        turn: nextTurn,
+      })
+      .eq('id', gameId);
+  
+    if (error) {
+      console.error('Failed to skip turn:', error);
+    } else {
+      setGame((prev) => ({
+        ...prev,
+        turn: nextTurn,
+      }));
+    }
+  };
+  
 
   const handleSquareClick = (row, col) => {
     if (!game || !isMyTurn() || loading || game.status === 'won') return;
@@ -273,7 +316,7 @@ const GamePage = () => {
   
     if (game.status === 'forfeited') {
       const didOpponentForfeit = game.forfeited_by && game.forfeited_by !== playerRole;
-    
+  
       return (
         <div className={`text-xl font-bold ${didOpponentForfeit ? 'text-green-600' : 'text-red-600'}`}>
           {didOpponentForfeit ? (
@@ -290,21 +333,30 @@ const GamePage = () => {
         </div>
       );
     }
-    
   
     if (isMyTurn()) {
       return (
-        <div className="text-xl font-bold text-amber-700 animate-pulse flex items-center gap-2 justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 9l3 3m0 0l-3 3m3-3H8" />
-          </svg>
-          Your Move!
+        <div className="flex flex-col items-center justify-center gap-1">
+          <div className="text-xl font-bold text-amber-700 animate-pulse flex items-center gap-2 justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 9l3 3m0 0l-3 3m3-3H8" />
+            </svg>
+            Your Move!
+          </div>
+          <p className="text-sm text-gray-700">Time left: {timeLeft}s</p>
+        </div>
+      );
+    } else {
+      return (
+        <div className="flex flex-col items-center justify-center gap-1">
+          <div className="text-xl font-bold text-gray-600">Opponent's Turn</div>
+          <p className="text-sm text-gray-700">Opponent's Remaining Time: {timeLeft}s</p>
         </div>
       );
     }
-  
     return <div className="text-xl font-bold text-gray-600">Opponent's Turn</div>;
   };
+  
   
 
   return (
