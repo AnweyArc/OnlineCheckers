@@ -15,6 +15,7 @@ const GamePage = () => {
   const [playerRole, setPlayerRole] = useState(null);
   const [loading, setLoading] = useState(false);
   const [timeLeft, setTimeLeft] = useState(60); // 60 seconds timer
+  const [opponentTimeLeft, setOpponentTimeLeft] = useState(60);
 
   useEffect(() => {
     const fetchGame = async () => {
@@ -59,6 +60,7 @@ const GamePage = () => {
 
     fetchGame();
   }, [gameId]);
+  
 
   useEffect(() => {
     if (!gameId) return;
