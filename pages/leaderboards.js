@@ -83,36 +83,51 @@ export default function Leaderboards() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-yellow-50 to-yellow-100 flex items-center justify-center p-6">
-      <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-3xl">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">🏆 Leaderboards</h2>
+    <div className="min-h-screen bg-sky-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-xl shadow-md border border-sky-100 p-6 w-full max-w-2xl">
+        <h2 className="text-3xl font-semibold text-sky-800 mb-6 text-center">
+          Leaderboard
+          <div className="mt-2 h-1 w-16 bg-sky-100 rounded-full mx-auto" />
+        </h2>
 
         {loading ? (
-          <p className="text-center text-gray-500">Loading leaderboards...</p>
+          <p className="text-center text-sky-400 italic">Fetching rankings...</p>
         ) : (
-          <ol className="space-y-2">
+          <ol className="space-y-3">
             {leaders.map(({ rank, name, wins, losses, forfeits }) => (
               <li
                 key={rank}
-                className="flex justify-between items-center border-b pb-2 last:border-none"
+                className="group flex justify-between items-center px-4 py-3 rounded-lg transition-all hover:bg-sky-50"
               >
-                <span className="font-semibold text-lg">
-                  #{rank}. {name}
-                </span>
-                <span className="text-gray-600 text-sm">
-                  🏆 {wins} | ❌ {losses} | 🚫 {forfeits}
-                </span>
+                <div className="flex items-center space-x-4">
+                  <span className="text-sky-400 font-medium w-6">#{rank}</span>
+                  <span className="text-sky-900 font-medium">{name}</span>
+                </div>
+                <div className="flex space-x-4">
+                  <div className="flex items-center space-x-1 text-green-500">
+                    <span className="text-sm bg-green-100 p-1 rounded-full">🏆</span>
+                    <span className="text-sm text-green-700">{wins}</span>
+                  </div>
+                  <div className="flex items-center space-x-1 text-rose-500">
+                    <span className="text-sm bg-rose-100 p-1 rounded-full">❌</span>
+                    <span className="text-sm text-rose-700">{losses}</span>
+                  </div>
+                  <div className="flex items-center space-x-1 text-amber-500">
+                    <span className="text-sm bg-amber-100 p-1 rounded-full">🚫</span>
+                    <span className="text-sm text-amber-700">{forfeits}</span>
+                  </div>
+                </div>
               </li>
             ))}
           </ol>
         )}
 
-        <div className="mt-6">
+        <div className="mt-8 border-t border-sky-100 pt-6">
           <button
-            className="w-full px-4 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
+            className="w-full px-6 py-2.5 text-sm font-medium text-sky-700 bg-sky-100 rounded-lg transition-all hover:bg-sky-200 hover:text-sky-900"
             onClick={() => router.push('/Player_Stats')}
           >
-            Back to Stats
+            Return to Stats
           </button>
         </div>
       </div>

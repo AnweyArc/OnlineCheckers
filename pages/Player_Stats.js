@@ -48,35 +48,63 @@ export default function PlayerStats() {
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-6">
-      <div className="bg-white rounded-xl shadow-lg p-8 max-w-lg w-full">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Player Stats</h2>
-        <p className="mb-6 text-gray-600">Hello, <span className="font-medium text-blue-600">{displayName}</span>!</p>
+    <div className="min-h-screen bg-sky-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-xl shadow-md border border-sky-100 p-6 w-full max-w-lg">
+        <h2 className="text-3xl font-semibold text-sky-800 mb-4">
+          Player Stats
+          <div className="mt-2 h-1 w-16 bg-sky-100 rounded-full" />
+        </h2>
+
+        <p className="mb-6 text-sky-600 text-lg">
+          Hello, <span className="font-medium text-sky-700">{displayName}</span>!
+        </p>
 
         {loading ? (
-          <p className="text-gray-500">Loading stats...</p>
+          <p className="text-center text-sky-400 italic">Loading statistics...</p>
         ) : (
-          <ul className="space-y-2 text-gray-700">
-            <li><strong>Total Games:</strong> {stats.total}</li>
-            <li><strong>Wins:</strong> {stats.wins}</li>
-            <li><strong>Losses:</strong> {stats.losses}</li>
-            <li><strong>Games Forfeited:</strong> {stats.forfeits}</li>
+          <ul className="space-y-4">
+            <li className="flex justify-between items-center bg-sky-50 px-4 py-3 rounded-lg">
+              <span className="text-sky-700 font-medium">Total Games</span>
+              <span className="text-sky-900 font-semibold">{stats.total}</span>
+            </li>
+            <li className="flex justify-between items-center bg-green-50 px-4 py-3 rounded-lg">
+              <div className="flex items-center space-x-2">
+                <span className="bg-green-100 p-1 rounded-full">🏆</span>
+                <span className="text-green-700 font-medium">Wins</span>
+              </div>
+              <span className="text-green-900 font-semibold">{stats.wins}</span>
+            </li>
+            <li className="flex justify-between items-center bg-rose-50 px-4 py-3 rounded-lg">
+              <div className="flex items-center space-x-2">
+                <span className="bg-rose-100 p-1 rounded-full">❌</span>
+                <span className="text-rose-700 font-medium">Losses</span>
+              </div>
+              <span className="text-rose-900 font-semibold">{stats.losses}</span>
+            </li>
+            <li className="flex justify-between items-center bg-amber-50 px-4 py-3 rounded-lg">
+              <div className="flex items-center space-x-2">
+                <span className="bg-amber-100 p-1 rounded-full">🚫</span>
+                <span className="text-amber-700 font-medium">Forfeits</span>
+              </div>
+              <span className="text-amber-900 font-semibold">{stats.forfeits}</span>
+            </li>
           </ul>
         )}
 
-        <button
-        className="mb-4 px-4 py-2 text-sm bg-green-500 text-white rounded hover:bg-green-600"
-        onClick={() => router.push('/leaderboards')}
-        >
-        View Leaderboards
-        </button>
-
-        <button
-        className="mt-0 px-4 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
-        onClick={() => router.push('/homescreen')}
-        >
-        Back to Home
-        </button>
+        <div className="mt-8 space-y-3">
+          <button
+            className="w-full px-6 py-2.5 text-sm font-medium text-sky-700 bg-sky-100 rounded-lg transition-all hover:bg-sky-200 hover:text-sky-900"
+            onClick={() => router.push('/leaderboards')}
+          >
+            View Leaderboards
+          </button>
+          <button
+            className="w-full px-6 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg transition-all hover:bg-gray-200 hover:text-gray-900"
+            onClick={() => router.push('/homescreen')}
+          >
+            Back to Home
+          </button>
+        </div>
       </div>
     </div>
   );
