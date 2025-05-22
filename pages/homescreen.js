@@ -27,18 +27,39 @@ export default function Homescreen() {
   const [joinGameId, setJoinGameId] = useState('');
   const [createGameId, setCreateGameId] = useState('');
 
+  const upsertProfile = async (user) => {
+    const { id, user_metadata } = user;
+    const displayName = user_metadata?.display_name || 'Player';
+  
+    const { error } = await supabase
+      .from('profiles')
+      .upsert(
+        { id, display_name: displayName },
+        { onConflict: 'id' }
+      );
+  
+    if (error) {
+      console.error('Failed to upsert profile:', error.message);
+    }
+  };
+  
+
   useEffect(() => {
     const checkUser = async () => {
       const { data } = await supabase.auth.getUser();
       if (data?.user) {
         setUserId(data.user.id);
         setDisplayName(data.user.user_metadata?.display_name || 'Player');
+  
+        await upsertProfile(data.user); // ✅ This must be the real user object
       } else {
         router.push('/');
       }
     };
     checkUser();
   }, [router]);
+  
+  
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -214,6 +235,14 @@ export default function Homescreen() {
           <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome to Online Checkers</h1>
           <h4 className="text-lg text-gray-400">Made By: Anwey</h4>
           <p className="text-lg text-gray-600">Hello, <span className="text-blue-600 font-medium">{displayName}</span>!</p>
+                <div className="mt-4">
+        <button
+          onClick={() => router.push('/Player_Stats')}
+          className="text-sm text-blue-500 hover:text-blue-700 font-medium transition-all"
+        >
+          View Stats
+        </button>
+</div>
         </div>
   
         <div className="mb-10 flex justify-center">
