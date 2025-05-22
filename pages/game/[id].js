@@ -210,33 +210,42 @@ const GamePage = () => {
   };
   
 
-  const renderBoard = () => (
-    <div className="relative p-2 sm:p-4 bg-amber-800 rounded-xl shadow-2xl w-full max-w-full overflow-hidden">
-      <div className="absolute inset-0 rounded-xl shadow-inner" />
+  const renderBoard = () => {
+    const rows = Array.from({ length: boardSize }, (_, i) => i);
+    const cols = Array.from({ length: boardSize }, (_, i) => i);
   
-      {/* Responsive grid board */}
-      <div
-        className="relative border-4 border-amber-900 rounded-lg overflow-hidden mx-auto grid"
-        style={{
-          display: "grid",
-          gridTemplateColumns: `repeat(${boardSize}, 1fr)`,
-          width: "100%",
-          maxWidth: "min(90vw, 90vh)",
-          aspectRatio: "1 / 1",
-        }}
-      >
-        {Array.from({ length: boardSize }).flatMap((_, row) =>
-          Array.from({ length: boardSize }).map((_, col) => renderSquare(row, col))
-        )}
+    // Reverse rows and columns if the player is black
+    const displayRows = playerRole === 'b' ? [...rows].reverse() : rows;
+    const displayCols = playerRole === 'b' ? [...cols].reverse() : cols;
+  
+    return (
+      <div className="relative p-2 sm:p-4 bg-amber-800 rounded-xl shadow-2xl w-full max-w-full overflow-hidden">
+        <div className="absolute inset-0 rounded-xl shadow-inner" />
+        
+        <div
+          className="relative border-4 border-amber-900 rounded-lg overflow-hidden mx-auto grid"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: `repeat(${boardSize}, 1fr)`,
+            width: '100%',
+            maxWidth: 'min(90vw, 90vh)',
+            aspectRatio: '1 / 1',
+          }}
+        >
+          {displayRows.flatMap((row) =>
+            displayCols.map((col) => renderSquare(row, col))
+          )}
+        </div>
+  
+        {/* Optional board frame decorations */}
+        <div className="absolute top-0 left-0 right-0 h-2 sm:h-4 bg-amber-900 rounded-t-xl" />
+        <div className="absolute bottom-0 left-0 right-0 h-2 sm:h-4 bg-amber-900 rounded-b-xl" />
+        <div className="absolute left-0 top-0 bottom-0 w-2 sm:w-4 bg-amber-900 rounded-l-xl" />
+        <div className="absolute right-0 top-0 bottom-0 w-2 sm:w-4 bg-amber-900 rounded-r-xl" />
       </div>
+    );
+  };
   
-      {/* Optional board frame decorations */}
-      <div className="absolute top-0 left-0 right-0 h-2 sm:h-4 bg-amber-900 rounded-t-xl" />
-      <div className="absolute bottom-0 left-0 right-0 h-2 sm:h-4 bg-amber-900 rounded-b-xl" />
-      <div className="absolute left-0 top-0 bottom-0 w-2 sm:w-4 bg-amber-900 rounded-l-xl" />
-      <div className="absolute right-0 top-0 bottom-0 w-2 sm:w-4 bg-amber-900 rounded-r-xl" />
-    </div>
-  );
   
 
   const renderStatus = () => {
