@@ -313,18 +313,32 @@ const GamePage = () => {
 
       {renderBoard()}
 
-      {(playerRole === 'r' || playerRole === 'b') && game?.status !== 'won' && (
-        <button
-          onClick={handleForfeit}
-          disabled={loading}
-          className="mt-4 md:mt-6 px-4 py-1.5 md:px-6 md:py-2 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white rounded-lg font-medium transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 flex items-center gap-2 text-sm md:text-base"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 md:h-5 md:w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-          </svg>
-          Forfeit
-        </button>
-      )}
+      {(playerRole === 'r' || playerRole === 'b') && (
+  <>
+    {game?.status === 'won' || game?.status === 'forfeited' ? (
+      <button
+        onClick={() => router.push('/')}
+        className="mt-4 md:mt-6 px-4 py-1.5 md:px-6 md:py-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg font-medium transition-all transform hover:scale-[1.02] flex items-center gap-2 text-sm md:text-base"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 md:h-5 md:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+        Go back to Lobby
+      </button>
+    ) : (
+      <button
+        onClick={handleForfeit}
+        disabled={loading}
+        className="mt-4 md:mt-6 px-4 py-1.5 md:px-6 md:py-2 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white rounded-lg font-medium transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 flex items-center gap-2 text-sm md:text-base"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 md:h-5 md:w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+        </svg>
+        Forfeit
+      </button>
+    )}
+  </>
+)}
     </div>
   );
 };
