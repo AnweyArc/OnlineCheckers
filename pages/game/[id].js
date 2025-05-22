@@ -160,15 +160,23 @@ const GamePage = () => {
   };
 
   const handleForfeit = async () => {
+    if (!playerRole) return;
     setLoading(true);
+  
     await deleteActiveGame();
-    await supabase
+  
+    const { error } = await supabase
       .from('games')
-      .update({ status: 'forfeited' })
+      .update({
+        status: 'forfeited',
+        forfeited_by: playerRole,
+      })
       .eq('id', gameId);
+  
     setLoading(false);
     router.push('/');
   };
+  
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -250,7 +258,7 @@ const GamePage = () => {
 
   const renderStatus = () => {
     if (!game) return null;
-
+  
     if (game.status === 'won') {
       const isWinner = game.winner === playerRole;
       return (
@@ -262,7 +270,28 @@ const GamePage = () => {
         </div>
       );
     }
-
+  
+    if (game.status === 'forfeited') {
+      const didOpponentForfeit = game.forfeited_by && game.forfeited_by !== playerRole;
+    
+      return (
+        <div className={`text-xl font-bold ${didOpponentForfeit ? 'text-green-600' : 'text-red-600'}`}>
+          {didOpponentForfeit ? (
+            <div className="flex items-center justify-center gap-2">
+              <span className="text-2xl">🏳️</span>
+              Opponent forfeited. You win!
+            </div>
+          ) : (
+            <div className="flex items-center justify-center gap-2">
+              <span className="text-2xl">🏳️</span>
+              You forfeited the game.
+            </div>
+          )}
+        </div>
+      );
+    }
+    
+  
     if (isMyTurn()) {
       return (
         <div className="text-xl font-bold text-amber-700 animate-pulse flex items-center gap-2 justify-center">
@@ -273,9 +302,10 @@ const GamePage = () => {
         </div>
       );
     }
-
+  
     return <div className="text-xl font-bold text-gray-600">Opponent's Turn</div>;
   };
+  
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-amber-50 to-amber-100 flex flex-col items-center justify-center p-4">
