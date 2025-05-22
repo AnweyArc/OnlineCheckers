@@ -12,40 +12,56 @@ export default function PlayerStats() {
     const fetchStats = async () => {
       const { data: authData } = await supabase.auth.getUser();
       const user = authData?.user;
-
+  
       if (!user) {
         router.push('/');
         return;
       }
-
+  
       setDisplayName(user.user_metadata?.display_name || 'Player');
-
-      // Get games where user is red or black
+  
       const { data: games, error } = await supabase
         .from('games')
         .select('*')
         .or(`player_red.eq.${user.id},player_black.eq.${user.id}`);
-
+  
       if (error) {
         console.error('Failed to fetch games:', error);
         setLoading(false);
         return;
       }
-
-      // Count wins, losses, forfeits
+  
       let wins = 0, losses = 0, forfeits = 0;
-      games.forEach(game => {
-        if (game.winner === user.id) wins++;
-        else if (game.winner && game.winner !== user.id) losses++;
-        if (game.forfeited_by === user.id) forfeits++;
+  
+      games.forEach((game) => {
+        const isRed = game.player_red === user.id;
+        const isBlack = game.player_black === user.id;
+  
+        // Win condition
+        if ((game.winner === 'r' && isRed) || (game.winner === 'b' && isBlack)) {
+          wins++;
+        }
+  
+        // Loss condition
+        if ((game.winner === 'r' && isBlack) || (game.winner === 'b' && isRed)) {
+          losses++;
+        }
+  
+        // Forfeit condition
+        if (game.forfeited_by?.toString() === user.id.toString()) {
+          forfeits++;
+        }
+        
       });
-
+  
       setStats({ total: games.length, wins, losses, forfeits });
       setLoading(false);
     };
-
+  
     fetchStats();
   }, [router]);
+  
+  
 
   return (
     <div className="min-h-screen bg-sky-50 flex items-center justify-center p-4">
