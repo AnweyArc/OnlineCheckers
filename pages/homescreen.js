@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useRouter } from 'next/router';
+import BackgroundLottie from '../components/BackgroundLottie';
+
 
 const boardSize = 8;
 
@@ -230,6 +232,7 @@ export default function Homescreen() {
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-50 to-indigo-50 flex flex-col items-center justify-center p-4">
+      <BackgroundLottie />
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl px-8 py-10">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome to Online Checkers</h1>

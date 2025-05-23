@@ -1,7 +1,9 @@
+//index.js
+
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useRouter } from 'next/router';
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import BackgroundLottie from '../components/BackgroundLottie';
 
 export default function AuthPage() {
   const [email, setEmail] = useState('');
@@ -67,31 +69,12 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden">
-      {/* Lottie Background Animation */}
-      <DotLottieReact
-    src="https://lottie.host/371ff15b-d38c-4ee2-8dfd-9237628ceaa7/C1z3gmIRYH.lottie"
-    loop
-    autoplay
-    style={{
-      position: 'absolute',
-      inset: 0,
-      width: '100%',
-      height: '100%',
-      zIndex: 0,
-      pointerEvents: 'none',
-      transform: 'scale(1.1)',
-    }}
-    // Proper way to set preserveAspectRatio for Lottie
-    onConfig={(config) => {
-      config.setRendererSettings({
-        preserveAspectRatio: 'xMidYMid slice'
-      });
-    }}
-  />
+    <div className="w-screen h-screen overflow-hidden relative">
+    <BackgroundLottie />
 
-      {/* Foreground Content */}
-      <div className="relative z-10 w-full max-w-md bg-white rounded-2xl shadow-xl px-8 py-10">
+    {/* Foreground Content */}
+    <div className="absolute inset-0 flex items-center justify-center p-4 z-20">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl px-8 py-10">
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">
             {isLogin ? 'Welcome Back' : 'Create Account'}
@@ -190,6 +173,7 @@ export default function AuthPage() {
           </button>
         </form>
       </div>
+    </div>
     </div>
   );
 }
