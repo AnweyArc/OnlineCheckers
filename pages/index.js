@@ -69,12 +69,12 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="w-screen h-screen overflow-hidden relative">
+    <div className="relative w-screen h-screen overflow-hidden">
     <BackgroundLottie />
 
     {/* Foreground Content */}
-    <div className="absolute inset-0 flex items-center justify-center p-4 z-20">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl px-8 py-10">
+    <div className="absolute inset-0 flex items-center justify-center z-20 p-4">
+    <div className="w-full max-w-md bg-white rounded-2xl shadow-xl px-8 py-10">
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">
             {isLogin ? 'Welcome Back' : 'Create Account'}
