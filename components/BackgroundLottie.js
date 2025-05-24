@@ -10,9 +10,9 @@ export default function BackgroundLottie() {
         left: 0,
         width: '100vw',
         height: '100vh',
-        zIndex: -10, // Push it behind everything else
-        pointerEvents: 'none', // Don't block clicks
+        zIndex: 0,
         overflow: 'hidden',
+        pointerEvents: 'none',
       }}
     >
       <DotLottieReact
