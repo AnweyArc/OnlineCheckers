@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useRouter } from 'next/router';
+import BackgroundLottie from '../components/BackgroundLottie';
 
 export default function PlayerStats() {
   const router = useRouter();
@@ -12,62 +13,62 @@ export default function PlayerStats() {
     const fetchStats = async () => {
       const { data: authData } = await supabase.auth.getUser();
       const user = authData?.user;
-  
+
       if (!user) {
         router.push('/');
         return;
       }
-  
+
       setDisplayName(user.user_metadata?.display_name || 'Player');
-  
+
       const { data: games, error } = await supabase
         .from('games')
         .select('*')
         .or(`player_red.eq.${user.id},player_black.eq.${user.id}`);
-  
+
       if (error) {
         console.error('Failed to fetch games:', error);
         setLoading(false);
         return;
       }
-  
+
       let wins = 0, losses = 0, forfeits = 0;
-  
+
       games.forEach((game) => {
         const isRed = `${game.player_red}` === `${user.id}`;
         const isBlack = `${game.player_black}` === `${user.id}`;
-      
-        // Forfeit condition
+
         if ((isRed && game.forfeited_by === 'r') || (isBlack && game.forfeited_by === 'b')) {
           forfeits++;
         }
-      
+
         if (!game.winner) return;
-      
-        // Win condition
+
         if ((game.winner === 'r' && isRed) || (game.winner === 'b' && isBlack)) {
           wins++;
         }
-      
-        // Loss condition
+
         if ((game.winner === 'r' && isBlack) || (game.winner === 'b' && isRed)) {
           losses++;
         }
       });
-      
-  
+
       setStats({ total: games.length, wins, losses, forfeits });
       setLoading(false);
     };
-  
+
     fetchStats();
   }, [router]);
-  
-  
 
   return (
-    <div className="min-h-screen bg-sky-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-md border border-sky-100 p-6 w-full max-w-lg">
+    <div className="relative min-h-screen flex items-center justify-center p-4">
+      {/* Background Lottie */}
+      <div className="absolute inset-0 z-0">
+        <BackgroundLottie />
+      </div>
+
+      {/* Main Content */}
+      <div className="relative z-10 bg-white rounded-xl shadow-md border border-sky-100 p-6 w-full max-w-lg">
         <h2 className="text-3xl font-semibold text-sky-800 mb-4">
           Player Stats
           <div className="mt-2 h-1 w-16 bg-sky-100 rounded-full" />
