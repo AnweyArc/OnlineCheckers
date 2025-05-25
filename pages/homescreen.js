@@ -3,7 +3,6 @@ import { supabase } from '../lib/supabaseClient';
 import { useRouter } from 'next/router';
 import BackgroundLottie from '../components/BackgroundLottie';
 
-
 const boardSize = 8;
 
 const createInitialBoard = () => {
@@ -32,19 +31,15 @@ export default function Homescreen() {
   const upsertProfile = async (user) => {
     const { id, user_metadata } = user;
     const displayName = user_metadata?.display_name || 'Player';
-  
+
     const { error } = await supabase
       .from('profiles')
-      .upsert(
-        { id, display_name: displayName },
-        { onConflict: 'id' }
-      );
-  
+      .upsert({ id, display_name: displayName }, { onConflict: 'id' });
+
     if (error) {
       console.error('Failed to upsert profile:', error.message);
     }
   };
-  
 
   useEffect(() => {
     const checkUser = async () => {
@@ -52,16 +47,13 @@ export default function Homescreen() {
       if (data?.user) {
         setUserId(data.user.id);
         setDisplayName(data.user.user_metadata?.display_name || 'Player');
-  
-        await upsertProfile(data.user); // ✅ This must be the real user object
+        await upsertProfile(data.user);
       } else {
         router.push('/');
       }
     };
     checkUser();
   }, [router]);
-  
-  
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -179,16 +171,14 @@ export default function Homescreen() {
   const renderBoardPreview = () => (
     <div className="relative p-2 sm:p-4 bg-amber-800 rounded-xl shadow-2xl w-full max-w-full overflow-hidden">
       <div className="absolute inset-0 rounded-xl shadow-inner" />
-  
-      {/* Responsive board using CSS Grid */}
       <div
         className="relative border-4 border-amber-900 rounded-lg overflow-hidden mx-auto grid"
         style={{
           display: "grid",
           gridTemplateColumns: `repeat(${boardSize}, 1fr)`,
           width: "100%",
-          maxWidth: "min(90vw, 90vh)", // keep it within screen
-          aspectRatio: "1 / 1" // ensures perfect square board
+          maxWidth: "min(90vw, 90vh)",
+          aspectRatio: "1 / 1"
         }}
       >
         {Array(boardSize).fill(null).flatMap((_, row) =>
@@ -196,7 +186,7 @@ export default function Homescreen() {
             const isEven = (row + col) % 2 === 0;
             const board = createInitialBoard();
             const piece = board[row][col];
-  
+
             return (
               <div
                 key={`${row}-${col}`}
@@ -219,39 +209,40 @@ export default function Homescreen() {
           })
         )}
       </div>
-  
-      {/* Optional board frame decorations */}
-      <div className="absolute top-0 left-0 right-0 h-2 sm:h-4 bg-amber-900 rounded-t-xl" />
-      <div className="absolute bottom-0 left-0 right-0 h-2 sm:h-4 bg-amber-900 rounded-b-xl" />
-      <div className="absolute left-0 top-0 bottom-0 w-2 sm:w-4 bg-amber-900 rounded-l-xl" />
-      <div className="absolute right-0 top-0 bottom-0 w-2 sm:w-4 bg-amber-900 rounded-r-xl" />
     </div>
   );
-  
-  
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-50 to-indigo-50 flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl px-8 py-10">
+    <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-indigo-50 p-4 overflow-hidden">
+      {/* Background Lottie Animation */}
+      <div className="absolute inset-0 z-0">
+        <BackgroundLottie />
+      </div>
+
+      {/* Foreground Content */}
+      <div className="relative z-10 w-full max-w-2xl bg-white rounded-2xl shadow-xl px-8 py-10">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome to Online Checkers</h1>
           <h4 className="text-lg text-gray-400">Made By: Anwey</h4>
-          <p className="text-lg text-gray-600">Hello, <span className="text-blue-600 font-medium">{displayName}</span>!</p>
-                <div className="mt-4">
-        <button
-          onClick={() => router.push('/Player_Stats')}
-          className="text-sm text-blue-500 hover:text-blue-700 font-medium transition-all"
-        >
-          View Stats
-        </button>
-</div>
+          <p className="text-lg text-gray-600">
+            Hello, <span className="text-blue-600 font-medium">{displayName}</span>!
+          </p>
+          <div className="mt-4">
+            <button
+              onClick={() => router.push('/Player_Stats')}
+              className="text-sm text-blue-500 hover:text-blue-700 font-medium transition-all"
+            >
+              View Stats
+            </button>
+          </div>
         </div>
-  
+
         <div className="mb-10 flex justify-center">
           {renderBoardPreview()}
         </div>
-  
+
         <div className="space-y-8">
+          {/* Create Game */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-700">Create New Game</h3>
             <div className="flex gap-3 flex-col sm:flex-row">
@@ -268,20 +259,12 @@ export default function Homescreen() {
                 onClick={handleCreateGame}
                 disabled={loading}
               >
-                {loading ? (
-                  <span>Creating...</span>
-                ) : (
-                  <span className="flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
-                    </svg>
-                    Create Game
-                  </span>
-                )}
+                {loading ? 'Creating...' : 'Create Game'}
               </button>
             </div>
           </div>
-  
+
+          {/* Join Game */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-700">Join Existing Game</h3>
             <div className="flex gap-3 flex-col sm:flex-row">
@@ -298,28 +281,16 @@ export default function Homescreen() {
                 onClick={handleJoinGame}
                 disabled={loading}
               >
-                {loading ? (
-                  <span>Joining...</span>
-                ) : (
-                  <span className="flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
-                    </svg>
-                    Join Game
-                  </span>
-                )}
+                {loading ? 'Joining...' : 'Join Game'}
               </button>
             </div>
           </div>
         </div>
-  
+
         <button
           className="mt-10 w-full sm:w-auto px-6 py-2.5 text-red-600 hover:text-red-700 font-medium rounded-lg transition-all hover:bg-red-50 flex items-center gap-2 justify-center"
           onClick={handleLogout}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clipRule="evenodd" />
-          </svg>
           Logout
         </button>
       </div>

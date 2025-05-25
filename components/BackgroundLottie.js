@@ -13,7 +13,7 @@ export default function BackgroundLottie() {
         zIndex: 0,
         overflow: 'hidden',
         pointerEvents: 'none',
-        backgroundImage: 'url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e")',
+        backgroundImage: 'url("https://i.redd.it/9uicpqcferw61.png")',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
