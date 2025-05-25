@@ -13,18 +13,10 @@ export default function BackgroundLottie() {
         zIndex: 0,
         overflow: 'hidden',
         pointerEvents: 'none',
+        backgroundImage: 'url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
       }}
-    >
-      <DotLottieReact
-        src="https://lottie.host/371ff15b-d38c-4ee2-8dfd-9237628ceaa7/C1z3gmIRYH.lottie"
-        loop
-        autoplay
-        style={{
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-        }}
-      />
-    </div>
+    />
   );
 }
