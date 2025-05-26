@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useRouter } from 'next/router';
 import BackgroundLottie from '../components/BackgroundLottie';
+import { Grid } from 'ldrs/react'
+import 'ldrs/react/Grid.css'
 
 export default function Leaderboards() {
   const [leaders, setLeaders] = useState([]);
@@ -99,6 +101,12 @@ export default function Leaderboards() {
   }, []);
 
   return (
+    <>
+    {loading && (
+      <div className="fixed inset-0 z-50 bg-white/70 flex items-center justify-center">
+        <Grid size="60" speed="1.5" color="black" />
+      </div>
+    )}
     <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden">
       <div className="absolute inset-0 z-0">
         <BackgroundLottie />
@@ -171,5 +179,6 @@ export default function Leaderboards() {
         </div>
       </div>
     </div>
+    </>
   );
 }

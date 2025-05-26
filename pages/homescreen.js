@@ -3,6 +3,10 @@ import { supabase } from '../lib/supabaseClient';
 import { useRouter } from 'next/router';
 import BackgroundLottie from '../components/BackgroundLottie';
 
+import { Grid } from 'ldrs/react'
+import 'ldrs/react/Grid.css'
+
+
 const boardSize = 8;
 
 const createInitialBoard = () => {
@@ -186,7 +190,7 @@ export default function Homescreen() {
             const isEven = (row + col) % 2 === 0;
             const board = createInitialBoard();
             const piece = board[row][col];
-
+  
             return (
               <div
                 key={`${row}-${col}`}
@@ -198,11 +202,20 @@ export default function Homescreen() {
               >
                 <div className={`absolute inset-0 opacity-20 ${isEven ? 'bg-white' : 'bg-black'}`} />
                 {piece && (
-                  <div className={`relative z-10 rounded-full shadow-lg w-[60%] h-[60%]
+                  <div className={`relative z-10 rounded-full shadow-xl w-[70%] h-[70%]
                     ${piece === 'r'
-                      ? 'bg-gradient-to-br from-red-500 to-red-700 ring-2 ring-red-200'
-                      : 'bg-gradient-to-br from-gray-800 to-black ring-2 ring-gray-300'}`}
-                  />
+                      ? 'bg-gradient-to-br from-red-500 via-red-600 to-red-700 ring-3 ring-red-100/50 shadow-inner'
+                      : 'bg-gradient-to-br from-gray-900 via-gray-800 to-black ring-3 ring-gray-400/30 shadow-inner'}`}
+                  >
+                    {/* Add subtle inner highlight */}
+                    <div className={`absolute inset-0 rounded-full mix-blend-screen 
+                      ${piece === 'r' 
+                        ? 'bg-gradient-to-tr from-red-200/30 to-transparent' 
+                        : 'bg-gradient-to-tr from-gray-400/20 to-transparent'}`} 
+                    />
+                    {/* Add center reflection */}
+                    <div className="absolute inset-0 rounded-full mix-blend-overlay bg-gradient-to-br from-white/10 to-transparent" />
+                  </div>
                 )}
               </div>
             );
@@ -213,6 +226,12 @@ export default function Homescreen() {
   );
 
   return (
+    <>
+    {loading && (
+      <div className="fixed inset-0 z-50 bg-white/70 flex items-center justify-center">
+        <Grid size="60" speed="1.5" color="black" />
+      </div>
+    )}
     <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-indigo-50 p-4 overflow-hidden">
       {/* Background Lottie Animation */}
       <div className="absolute inset-0 z-0">
@@ -297,5 +316,6 @@ export default function Homescreen() {
       </div>
     </div>
     </div>
+    </>
   );
 }
