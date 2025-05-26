@@ -68,7 +68,7 @@ export default function PlayerStats() {
       </div>
 
       {/* Main Content Container */}
-      <div className="relative z-10 rounded-xl shadow-2xl bg-gradient-to-br from-sky-400 via-purple-400 to-pink-400 p-[2px] w-full max-w-lg animate-gradient">
+      <div className="relative z-10 rounded-xl shadow-2xl  bg-gradient-to-br from-stone-400 via-orange-400 to-orange-400 p-[2px] w-full max-w-lg animate-gradient">
         {/* Inner Content Card */}
         <div className="bg-white rounded-xl p-6 w-full h-full">
           <h2 className="text-3xl font-semibold text-sky-800 mb-4">

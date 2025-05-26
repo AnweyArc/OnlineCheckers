@@ -75,7 +75,7 @@ export default function AuthPage() {
     {/* Foreground Content */}
     <div className="absolute inset-0 flex items-center justify-center z-20 p-4">
       {/* Gradient Border Wrapper */}
-      <div className="rounded-2xl shadow-2xl bg-gradient-to-br from-sky-400 via-purple-400 to-pink-400 p-[2px] w-full max-w-md animate-gradient">
+      <div className="rounded-2xl shadow-2xl bg-gradient-to-br from-stone-400 via-orange-400 to-orange-400 p-[2px] w-full max-w-md animate-gradient">
         {/* Inner Content Card */}
         <div className="bg-white rounded-2xl px-8 py-10 w-full h-full">
           <div className="mb-8 text-center">

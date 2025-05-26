@@ -220,7 +220,7 @@ export default function Homescreen() {
       </div>
 
       {/* Foreground Content */}
-      <div className="relative z-10 w-full max-w-2xl rounded-2xl shadow-2xl bg-gradient-to-br from-sky-400 via-purple-400 to-pink-400 p-[2px] animate-gradient">
+      <div className="relative z-10 w-full max-w-2xl rounded-2xl shadow-2xl  bg-gradient-to-br from-stone-400 via-orange-400 to-orange-400 p-[2px] animate-gradient">
       <div className="bg-white rounded-2xl px-8 py-10 w-full h-full">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome to Online Checkers</h1>
