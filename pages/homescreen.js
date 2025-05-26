@@ -220,7 +220,7 @@ export default function Homescreen() {
       </div>
 
       {/* Foreground Content */}
-      <div className="relative z-10 w-full max-w-2xl bg-white rounded-2xl shadow-xl px-8 py-10">
+      <div className="relative z-10 w-full max-w-2xl glass-card bg-white rounded-2xl shadow-xl px-8 py-10">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome to Online Checkers</h1>
           <h4 className="text-lg text-gray-400">Made By: Anwey</h4>
