@@ -74,15 +74,18 @@ export default function AuthPage() {
 
     {/* Foreground Content */}
     <div className="absolute inset-0 flex items-center justify-center z-20 p-4">
-    <div className="w-full max-w-md bg-white glass-card rounded-2xl shadow-xl px-8 py-10">
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            {isLogin ? 'Welcome Back' : 'Create Account'}
-          </h1>
-          <p className="text-gray-500">
-            {isLogin ? 'Sign in to continue' : 'Get started for free'}
-          </p>
-        </div>
+      {/* Gradient Border Wrapper */}
+      <div className="rounded-2xl shadow-2xl bg-gradient-to-br from-sky-400 via-purple-400 to-pink-400 p-[2px] w-full max-w-md animate-gradient">
+        {/* Inner Content Card */}
+        <div className="bg-white rounded-2xl px-8 py-10 w-full h-full">
+          <div className="mb-8 text-center">
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">
+              {isLogin ? 'Welcome Back' : 'Create Account'}
+            </h1>
+            <p className="text-gray-500">
+              {isLogin ? 'Sign in to continue' : 'Get started for free'}
+            </p>
+          </div>
 
         <button
           onClick={() => {
@@ -173,6 +176,7 @@ export default function AuthPage() {
           </button>
         </form>
       </div>
+    </div>
     </div>
     </div>
   );

@@ -99,71 +99,75 @@ export default function Leaderboards() {
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-sky-50 flex items-center justify-center p-4 overflow-hidden">
+    <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden">
       <div className="absolute inset-0 z-0">
         <BackgroundLottie />
       </div>
 
-      <div className="relative z-10 bg-white rounded-xl shadow-md border border-sky-100 p-6 w-full max-w-2xl">
-        <h2 className="text-3xl font-semibold text-sky-800 mb-6 text-center">
-          Leaderboard
-          <div className="mt-2 h-1 w-16 bg-sky-100 rounded-full mx-auto" />
-        </h2>
+      {/* Enhanced Card Container */}
+      <div className="relative z-10 rounded-xl shadow-2xl bg-gradient-to-br from-sky-400 via-purple-400 to-pink-400 p-[2px] w-full max-w-2xl animate-gradient">
+        {/* Inner Content */}
+        <div className="bg-white rounded-xl p-6 w-full h-full">
+          <h2 className="text-3xl font-semibold text-sky-800 mb-6 text-center">
+            Leaderboard
+            <div className="mt-2 h-1 w-16 bg-sky-100 rounded-full mx-auto" />
+          </h2>
 
-        {loading ? (
-          <p className="text-center text-sky-400 italic">Fetching rankings...</p>
-        ) : (
-          <ol className="space-y-3">
-            {leaders.map(({ rank, name, wins, losses, forfeits }) => {
-              const renderRankIcon = () => {
-                switch (rank) {
-                  case 1:
-                    return <span className="text-amber-500 text-lg">🥇</span>;
-                  case 2:
-                    return <span className="text-gray-400 text-lg">🥈</span>;
-                  case 3:
-                    return <span className="text-yellow-700 text-lg">🥉</span>;
-                  default:
-                    return <span className="text-sky-400 font-medium w-6">#{rank}</span>;
-                }
-              };
+          {loading ? (
+            <p className="text-center text-sky-400 italic">Fetching rankings...</p>
+          ) : (
+            <ol className="space-y-3">
+              {leaders.map(({ rank, name, wins, losses, forfeits }) => {
+                const renderRankIcon = () => {
+                  switch (rank) {
+                    case 1:
+                      return <span className="text-amber-500 text-lg">🥇</span>;
+                    case 2:
+                      return <span className="text-gray-400 text-lg">🥈</span>;
+                    case 3:
+                      return <span className="text-yellow-700 text-lg">🥉</span>;
+                    default:
+                      return <span className="text-sky-400 font-medium w-6">#{rank}</span>;
+                  }
+                };
 
-              return (
-                <li
-                  key={rank}
-                  className="group flex justify-between items-center px-4 py-3 rounded-lg transition-all hover:bg-sky-50"
-                >
-                  <div className="flex items-center space-x-4">
-                    {renderRankIcon()}
-                    <span className="text-sky-900 font-medium">{name}</span>
-                  </div>
-                  <div className="flex space-x-4">
-                    <div className="flex items-center space-x-1 text-green-500">
-                      <span className="text-sm bg-green-100 p-1 rounded-full">🏆</span>
-                      <span className="text-sm text-green-700">{wins}</span>
+                return (
+                  <li
+                    key={rank}
+                    className="group flex justify-between items-center px-4 py-3 rounded-lg transition-all hover:bg-sky-50"
+                  >
+                    <div className="flex items-center space-x-4">
+                      {renderRankIcon()}
+                      <span className="text-sky-900 font-medium">{name}</span>
                     </div>
-                    <div className="flex items-center space-x-1 text-rose-500">
-                      <span className="text-sm bg-rose-100 p-1 rounded-full">❌</span>
-                      <span className="text-sm text-rose-700">{losses}</span>
+                    <div className="flex space-x-4">
+                      <div className="flex items-center space-x-1 text-green-500">
+                        <span className="text-sm bg-green-100 p-1 rounded-full">🏆</span>
+                        <span className="text-sm text-green-700">{wins}</span>
+                      </div>
+                      <div className="flex items-center space-x-1 text-rose-500">
+                        <span className="text-sm bg-rose-100 p-1 rounded-full">❌</span>
+                        <span className="text-sm text-rose-700">{losses}</span>
+                      </div>
+                      <div className="flex items-center space-x-1 text-amber-500">
+                        <span className="text-sm bg-amber-100 p-1 rounded-full">🚫</span>
+                        <span className="text-sm text-amber-700">{forfeits}</span>
+                      </div>
                     </div>
-                    <div className="flex items-center space-x-1 text-amber-500">
-                      <span className="text-sm bg-amber-100 p-1 rounded-full">🚫</span>
-                      <span className="text-sm text-amber-700">{forfeits}</span>
-                    </div>
-                  </div>
-                </li>
-              );
-            })}
-          </ol>
-        )}
+                  </li>
+                );
+              })}
+            </ol>
+          )}
 
-        <div className="mt-8 border-t border-sky-100 pt-6">
-          <button
-            className="w-full px-6 py-2.5 text-sm font-medium text-sky-700 bg-sky-100 rounded-lg transition-all hover:bg-sky-200 hover:text-sky-900"
-            onClick={() => router.push('/Player_Stats')}
-          >
-            Return to Stats
-          </button>
+          <div className="mt-8 border-t border-sky-100 pt-6">
+            <button
+              className="w-full px-6 py-2.5 text-sm font-medium text-sky-700 bg-sky-100 rounded-lg transition-all hover:bg-sky-200 hover:text-sky-900"
+              onClick={() => router.push('/Player_Stats')}
+            >
+              Return to Stats
+            </button>
+          </div>
         </div>
       </div>
     </div>
