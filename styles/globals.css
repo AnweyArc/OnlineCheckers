@@ -36,5 +36,11 @@ body,
   background: transparent; /* Optional: disables scroll */
 }
 
+.glass-card {
+  background-color: rgba(255, 255, 255, 0.826);
+  backdrop-filter: blur(10px);
+}
+
+
 
 
