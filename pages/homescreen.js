@@ -227,95 +227,100 @@ export default function Homescreen() {
 
   return (
     <>
-    {loading && (
-      <div className="fixed inset-0 z-50 bg-white/70 flex items-center justify-center">
-        <Grid size="60" speed="1.5" color="black" />
-      </div>
-    )}
-    <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-indigo-50 p-4 overflow-hidden">
-      {/* Background Lottie Animation */}
-      <div className="absolute inset-0 z-0">
-        <BackgroundLottie />
-      </div>
-
-      {/* Foreground Content */}
-      <div className="relative z-10 w-full max-w-2xl rounded-2xl shadow-2xl  bg-gradient-to-br from-stone-400 via-orange-400 to-orange-400 p-[2px] animate-gradient">
-      <div className="bg-white rounded-2xl px-8 py-10 w-full h-full">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome to Online Checkers</h1>
-          <h4 className="text-lg text-gray-400">Made By: Anwey</h4>
-          <p className="text-lg text-gray-600">
-            Hello, <span className="text-blue-600 font-medium">{displayName}</span>!
-          </p>
-          <div className="mt-4">
+      {loading && (
+        <div className="fixed inset-0 z-50 bg-white/70 flex items-center justify-center">
+          <Grid size="60" speed="1.5" color="black" />
+        </div>
+      )}
+      <div className="relative w-full min-h-screen flex items-center justify-center bg-slate-900 p-4 overflow-hidden">
+        {/* Background Lottie Animation */}
+        <div className="absolute inset-0 z-0">
+          <BackgroundLottie />
+        </div>
+  
+        {/* Glowing Border Effect */}
+        <div className="absolute -inset-2 bg-gradient-to-r from-amber-400 to-orange-500 rounded-3xl blur-xl opacity-40 animate-pulse z-10 pointer-events-none" />
+  
+        {/* Foreground Content */}
+        <div className="relative z-20 w-full max-w-2xl rounded-2xl shadow-2xl bg-gradient-to-br from-amber-100 via-amber-50 to-orange-50 p-[2px] overflow-hidden">
+          <div className="bg-slate-900/95 backdrop-blur-sm rounded-2xl px-8 py-10 w-full h-full">
+            <div className="text-center mb-8">
+              <h1 className="text-3xl md:text-4xl font-bold text-amber-100 mb-2 animate-gradient bg-gradient-to-r from-amber-400 via-orange-300 to-amber-500 bg-clip-text text-transparent">
+                Welcome to Online Checkers
+              </h1>
+              <h4 className="text-lg text-amber-100/60">Made By: Anwey</h4>
+              <p className="text-lg text-amber-100/80 mt-2">
+                Hello, <span className="text-amber-400 font-medium">{displayName}</span>!
+              </p>
+              <div className="mt-4">
+                <button
+                  onClick={() => router.push('/Player_Stats')}
+                  className="text-sm text-amber-400 hover:text-amber-300 font-medium transition-all"
+                >
+                  View Stats
+                </button>
+              </div>
+            </div>
+  
+            <div className="mb-10 flex justify-center">
+              {renderBoardPreview()}
+            </div>
+  
+            <div className="space-y-10">
+              {/* Create Game */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-amber-100/90">Create New Game</h3>
+                <div className="flex gap-3 flex-col sm:flex-row">
+                  <input
+                    type="text"
+                    placeholder="Enter game ID..."
+                    className="w-full px-4 py-3 bg-slate-800/50 border border-amber-900/30 rounded-lg text-amber-100 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition placeholder:text-amber-100/40"
+                    value={createGameId}
+                    onChange={(e) => setCreateGameId(e.target.value)}
+                    disabled={loading}
+                  />
+                  <button
+                    className="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-amber-50 px-6 py-3 rounded-lg font-medium transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100"
+                    onClick={handleCreateGame}
+                    disabled={loading}
+                  >
+                    {loading ? 'Creating...' : 'Create Game'}
+                  </button>
+                </div>
+              </div>
+  
+              {/* Join Game */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-amber-100/90">Join Existing Game</h3>
+                <div className="flex gap-3 flex-col sm:flex-row">
+                  <input
+                    type="text"
+                    placeholder="Enter game ID..."
+                    className="w-full px-4 py-3 bg-slate-800/50 border border-green-900/30 rounded-lg text-green-100 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition placeholder:text-green-100/40"
+                    value={joinGameId}
+                    onChange={(e) => setJoinGameId(e.target.value)}
+                    disabled={loading}
+                  />
+                  <button
+                    className="w-full sm:w-auto bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-3 rounded-lg font-medium transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100"
+                    onClick={handleJoinGame}
+                    disabled={loading}
+                  >
+                    {loading ? 'Joining...' : 'Join Game'}
+                  </button>
+                </div>
+              </div>
+            </div>
+  
             <button
-              onClick={() => router.push('/Player_Stats')}
-              className="text-sm text-blue-500 hover:text-blue-700 font-medium transition-all"
+              className="mt-10 w-full sm:w-auto px-6 py-2.5 text-red-500 hover:text-red-600 font-medium rounded-lg transition-all hover:bg-red-100/10 flex items-center gap-2 justify-center"
+              onClick={handleLogout}
             >
-              View Stats
+              Logout
             </button>
           </div>
         </div>
-
-        <div className="mb-10 flex justify-center">
-          {renderBoardPreview()}
-        </div>
-
-        <div className="space-y-8">
-          {/* Create Game */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-700">Create New Game</h3>
-            <div className="flex gap-3 flex-col sm:flex-row">
-              <input
-                type="text"
-                placeholder="Enter game ID..."
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-                value={createGameId}
-                onChange={(e) => setCreateGameId(e.target.value)}
-                disabled={loading}
-              />
-              <button
-                className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 whitespace-nowrap"
-                onClick={handleCreateGame}
-                disabled={loading}
-              >
-                {loading ? 'Creating...' : 'Create Game'}
-              </button>
-            </div>
-          </div>
-
-          {/* Join Game */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-700">Join Existing Game</h3>
-            <div className="flex gap-3 flex-col sm:flex-row">
-              <input
-                type="text"
-                placeholder="Enter game ID..."
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition"
-                value={joinGameId}
-                onChange={(e) => setJoinGameId(e.target.value)}
-                disabled={loading}
-              />
-              <button
-                className="w-full sm:w-auto bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-3 rounded-lg font-medium transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 whitespace-nowrap"
-                onClick={handleJoinGame}
-                disabled={loading}
-              >
-                {loading ? 'Joining...' : 'Join Game'}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <button
-          className="mt-10 w-full sm:w-auto px-6 py-2.5 text-red-600 hover:text-red-700 font-medium rounded-lg transition-all hover:bg-red-50 flex items-center gap-2 justify-center"
-          onClick={handleLogout}
-        >
-          Logout
-        </button>
       </div>
-    </div>
-    </div>
     </>
-  );
+  );  
 }

@@ -102,83 +102,87 @@ export default function Leaderboards() {
 
   return (
     <>
-    {loading && (
-      <div className="fixed inset-0 z-50 bg-white/70 flex items-center justify-center">
-        <Grid size="60" speed="1.5" color="black" />
-      </div>
-    )}
-    <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden">
-      <div className="absolute inset-0 z-0">
-        <BackgroundLottie />
-      </div>
-
-      {/* Enhanced Card Container */}
-      <div className="relative z-10 rounded-xl shadow-2xl bg-gradient-to-br from-sky-400 via-purple-400 to-pink-400 p-[2px] w-full max-w-2xl animate-gradient">
-        {/* Inner Content */}
-        <div className="bg-white rounded-xl p-6 w-full h-full">
-          <h2 className="text-3xl font-semibold text-sky-800 mb-6 text-center">
-            Leaderboard
-            <div className="mt-2 h-1 w-16 bg-sky-100 rounded-full mx-auto" />
-          </h2>
-
-          {loading ? (
-            <p className="text-center text-sky-400 italic">Fetching rankings...</p>
-          ) : (
-            <ol className="space-y-3">
-              {leaders.map(({ rank, name, wins, losses, forfeits }) => {
-                const renderRankIcon = () => {
-                  switch (rank) {
-                    case 1:
-                      return <span className="text-amber-500 text-lg">🥇</span>;
-                    case 2:
-                      return <span className="text-gray-400 text-lg">🥈</span>;
-                    case 3:
-                      return <span className="text-yellow-700 text-lg">🥉</span>;
-                    default:
-                      return <span className="text-sky-400 font-medium w-6">#{rank}</span>;
-                  }
-                };
-
-                return (
-                  <li
-                    key={rank}
-                    className="group flex justify-between items-center px-4 py-3 rounded-lg transition-all hover:bg-sky-50"
-                  >
-                    <div className="flex items-center space-x-4">
-                      {renderRankIcon()}
-                      <span className="text-sky-900 font-medium">{name}</span>
-                    </div>
-                    <div className="flex space-x-4">
-                      <div className="flex items-center space-x-1 text-green-500">
-                        <span className="text-sm bg-green-100 p-1 rounded-full">🏆</span>
-                        <span className="text-sm text-green-700">{wins}</span>
+      {loading && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center backdrop-blur-sm">
+          <Grid size="60" speed="1.5" color="white" />
+        </div>
+      )}
+      <div className="relative min-h-screen flex items-center justify-center bg-slate-900 p-4 overflow-hidden">
+        {/* Animated Background */}
+        <div className="absolute inset-0 z-0">
+          <BackgroundLottie />
+        </div>
+  
+        {/* Glowing Border Aura */}
+        <div className="absolute -inset-2 bg-gradient-to-tr from-purple-500 via-pink-400 to-sky-400 rounded-3xl blur-2xl opacity-40 animate-pulse z-10 pointer-events-none" />
+  
+        {/* Foreground Gradient Card */}
+        <div className="relative z-20 rounded-2xl shadow-2xl bg-gradient-to-br from-purple-100 via-sky-100 to-pink-50 p-[2px] w-full max-w-2xl">
+          <div className="bg-slate-900/95 backdrop-blur-sm rounded-2xl px-8 py-10 w-full h-full">
+            <h2 className="text-3xl font-bold text-white mb-6 text-center">
+              Leaderboard
+              <div className="mt-2 h-1 w-16 bg-white/20 rounded-full mx-auto" />
+            </h2>
+  
+            {loading ? (
+              <p className="text-center text-sky-300 italic">Fetching rankings...</p>
+            ) : (
+              <ol className="space-y-3">
+                {leaders.map(({ rank, name, wins, losses, forfeits }) => {
+                  const renderRankIcon = () => {
+                    switch (rank) {
+                      case 1:
+                        return <span className="text-amber-400 text-lg">🥇</span>;
+                      case 2:
+                        return <span className="text-gray-300 text-lg">🥈</span>;
+                      case 3:
+                        return <span className="text-yellow-600 text-lg">🥉</span>;
+                      default:
+                        return <span className="text-pink-300 font-medium w-6">#{rank}</span>;
+                    }
+                  };
+  
+                  return (
+                    <li
+                      key={rank}
+                      className="group flex justify-between items-center px-4 py-3 rounded-lg transition-all hover:bg-white/5"
+                    >
+                      <div className="flex items-center space-x-4">
+                        {renderRankIcon()}
+                        <span className="text-white font-medium">{name}</span>
                       </div>
-                      <div className="flex items-center space-x-1 text-rose-500">
-                        <span className="text-sm bg-rose-100 p-1 rounded-full">❌</span>
-                        <span className="text-sm text-rose-700">{losses}</span>
+                      <div className="flex space-x-4 text-sm">
+                        <div className="flex items-center space-x-1 text-green-300">
+                          <span className="bg-green-200/20 p-1 rounded-full">🏆</span>
+                          <span>{wins}</span>
+                        </div>
+                        <div className="flex items-center space-x-1 text-rose-300">
+                          <span className="bg-rose-200/20 p-1 rounded-full">❌</span>
+                          <span>{losses}</span>
+                        </div>
+                        <div className="flex items-center space-x-1 text-amber-300">
+                          <span className="bg-amber-200/20 p-1 rounded-full">🚫</span>
+                          <span>{forfeits}</span>
+                        </div>
                       </div>
-                      <div className="flex items-center space-x-1 text-amber-500">
-                        <span className="text-sm bg-amber-100 p-1 rounded-full">🚫</span>
-                        <span className="text-sm text-amber-700">{forfeits}</span>
-                      </div>
-                    </div>
-                  </li>
-                );
-              })}
-            </ol>
-          )}
-
-          <div className="mt-8 border-t border-sky-100 pt-6">
-            <button
-              className="w-full px-6 py-2.5 text-sm font-medium text-sky-700 bg-sky-100 rounded-lg transition-all hover:bg-sky-200 hover:text-sky-900"
-              onClick={() => router.push('/Player_Stats')}
-            >
-              Return to Stats
-            </button>
+                    </li>
+                  );
+                })}
+              </ol>
+            )}
+  
+            <div className="mt-10 border-t border-white/10 pt-6">
+              <button
+                className="w-full px-6 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-sky-500 to-purple-600 rounded-lg hover:from-sky-600 hover:to-purple-700 transition-all transform hover:scale-[1.02]"
+                onClick={() => router.push('/Player_Stats')}
+              >
+                Return to Stats
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
     </>
   );
+  
 }
