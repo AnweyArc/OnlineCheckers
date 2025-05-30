@@ -266,8 +266,6 @@ const GamePage = () => {
       </div>
     );
   };
-  
-
   const renderBoard = () => {
     const rows = Array.from({ length: boardSize }, (_, i) => i);
     const cols = Array.from({ length: boardSize }, (_, i) => i);
@@ -303,9 +301,6 @@ const GamePage = () => {
       </div>
     );
   };
-  
-  
-
   const renderStatus = () => {
     if (!game) return null;
   
@@ -369,10 +364,6 @@ const GamePage = () => {
       );
     }
   };
-  
-  
-  
-
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center bg-slate-900 p-4 overflow-hidden">
       {/* Animated Background */}
@@ -403,8 +394,7 @@ const GamePage = () => {
   
         <div className="space-y-3 md:space-y-4 mb-4 md:mb-8 text-center px-6">
         <div className="inline-block bg-black/30 px-4 py-1 md:px-6 md:py-2 rounded-full shadow-md">
-  <p className="text-base md:text-lg font-semibold text-gray-100">
-
+          <p className="text-base md:text-lg font-semibold text-gray-100">
               Playing as:{' '}
               <span className={`px-2 py-1 md:px-3 md:py-1 rounded-full ${
                 playerRole === 'r' ? 'bg-red-500' : 'bg-gray-800'
@@ -432,18 +422,17 @@ const GamePage = () => {
               </button>
             ) : (
               <div className="flex justify-center mt-4 md:mt-6">
-  <button
-    onClick={handleForfeit}
-    disabled={loading}
-    className="px-4 py-1.5 md:px-6 md:py-2 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white rounded-lg font-medium transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 flex items-center gap-2 text-sm md:text-base"
-  >
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 md:h-5 md:w-5" viewBox="0 0 20 20" fill="currentColor">
-      <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-    </svg>
-    Forfeit
-  </button>
-</div>
-
+                <button
+                  onClick={handleForfeit}
+                  disabled={loading}
+                  className="px-4 py-1.5 md:px-6 md:py-2 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white rounded-lg font-medium transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 flex items-center gap-2 text-sm md:text-base"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 md:h-5 md:w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                  Forfeit
+                </button>
+              </div>
             )}
           </>
         )}
